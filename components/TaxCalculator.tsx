@@ -19,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useCountries } from "@/hooks/useCountry";
 
 interface TaxCalculatorProps {
   onCountrySelect: (country: string) => void;
@@ -26,7 +27,8 @@ interface TaxCalculatorProps {
 
 export default function TaxCalculator({ onCountrySelect }: TaxCalculatorProps) {
   const [income, setIncome] = useState<string>("");
-  const { countries, calculateTax } = useTaxStore();
+  const { calculateTax } = useTaxStore();
+  const countries = useCountries();
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [taxResult, setTaxResult] = useState<{
     totalTax: number;
@@ -68,10 +70,22 @@ export default function TaxCalculator({ onCountrySelect }: TaxCalculatorProps) {
                 <SelectValue placeholder="Select a country" />
               </SelectTrigger>
               <SelectContent>
-                {countries.map((country) => (
-                  <SelectItem key={country.code} value={country.code}>
-                    {country.name}
-                  </SelectItem>
+                {countries
+                  // Filter out invalid or duplicate ISO codes
+                  .filter((country, index, self) => 
+                    country.properties.ISO_A2 !== '-' && 
+                    country.properties.ISO_A2 !== '-99' &&
+                    index === self.findIndex(c => c.properties.ISO_A2 === country.properties.ISO_A2)
+                  )
+                  // Sort by country name
+                  .sort((a, b) => a.properties.ADMIN.localeCompare(b.properties.ADMIN))
+                  .map((country) => (
+                    <SelectItem 
+                      key={country.properties.ISO_A2} 
+                      value={country.properties.ISO_A2}
+                    >
+                      {country.properties.ADMIN}
+                    </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -107,8 +121,8 @@ export default function TaxCalculator({ onCountrySelect }: TaxCalculatorProps) {
                   {taxResult.totalTax.toLocaleString("en-US", {
                     style: "currency",
                     currency:
-                      countries.find((c) => c.code === selectedCountry)
-                        ?.currency || "USD",
+                      countries.find((c) => c.properties.ISO_A2 === selectedCountry)
+                        ?.properties.currency || "USD",
                   })}
                 </p>
               </div>
@@ -136,8 +150,8 @@ export default function TaxCalculator({ onCountrySelect }: TaxCalculatorProps) {
                     {bracket.tax.toLocaleString("en-US", {
                       style: "currency",
                       currency:
-                        countries.find((c) => c.code === selectedCountry)
-                          ?.currency || "USD",
+                        countries.find((c) => c.properties.ISO_A2 === selectedCountry)
+                          ?.properties.currency || "USD",
                     })}
                   </span>
                 </div>
@@ -152,8 +166,8 @@ export default function TaxCalculator({ onCountrySelect }: TaxCalculatorProps) {
                     {taxResult.socialSecurity.toLocaleString("en-US", {
                       style: "currency",
                       currency:
-                        countries.find((c) => c.code === selectedCountry)
-                          ?.currency || "USD",
+                        countries.find((c) => c.properties.ISO_A2 === selectedCountry)
+                          ?.properties.currency || "USD",
                     })}
                   </span>
                 </div>
