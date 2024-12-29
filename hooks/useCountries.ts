@@ -15,7 +15,7 @@ export function useCountries() {
   const [countries, setCountries] = useState<CountryFeature[]>([]);
 
   useEffect(() => {
-    fetch("/countries.geojson")
+    fetch("/ne_110m_admin_0_countries.geojson")
       .then((res) => res.json())
       .then((data) => {
         setCountries(data.features);
