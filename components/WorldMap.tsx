@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import Globe from "react-globe.gl";
 import { Feature, Geometry } from 'geojson';
 import bbox from '@turf/bbox';
-import { CountryFeature, useCountries } from "@/hooks/useCountry";
+import { CountryFeature, useCountries } from "@/hooks/useCountries";
 
 interface WorldMapProps {
   isDarkMode: boolean;
@@ -28,7 +28,6 @@ export default function WorldMap({
       );
 
       if (countryFeature) {
-        // @ts-ignore or use type assertion if needed
         const bboxCoords = bbox(countryFeature as Feature<Geometry>);
         const centerLng = (bboxCoords[0] + bboxCoords[2]) / 2;
         const centerLat = (bboxCoords[1] + bboxCoords[3]) / 2;
@@ -54,10 +53,8 @@ export default function WorldMap({
             ? "//unpkg.com/three-globe/example/img/earth-night.jpg"
             : "//unpkg.com/three-globe/example/img/earth-day.jpg"
         }
-        hexPolygonsData={countries}
-        hexPolygonResolution={3}
-        hexPolygonMargin={0.3}
-        hexPolygonColor={(d) => {
+        polygonsData={countries}
+        polygonCapColor={(d) => {
           const country = d as CountryFeature;
           return country.properties.ISO_A2 === selectedCountry
           ? "#ff5233"
@@ -65,7 +62,9 @@ export default function WorldMap({
               ? "rgba(255,255,255,0.1)"
               : "rgba(0,0,0,0.1)"
         }}
-        hexPolygonLabel={(d) => {
+        polygonSideColor={() => "rgba(0, 100, 0, 0.15)"}
+        polygonStrokeColor={() => "#111"}
+        polygonLabel={(d) => {
           const country = d as CountryFeature;
           return `
             <div class="bg-black/80 p-2 rounded-lg">
@@ -74,7 +73,7 @@ export default function WorldMap({
             </div>
           `;
         }}
-        onHexPolygonClick={(polygon) => {
+        onPolygonClick={(polygon) => {
           const country = polygon as CountryFeature;
           onCountryClick(country.properties.ISO_A2);
         }}

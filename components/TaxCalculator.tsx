@@ -19,7 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useCountries } from "@/hooks/useCountry";
+import { useCountries } from "@/hooks/useCountries";
 
 interface TaxCalculatorProps {
   onCountrySelect: (country: string) => void;
