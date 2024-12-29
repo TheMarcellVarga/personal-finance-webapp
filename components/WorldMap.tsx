@@ -22,14 +22,6 @@ export default function WorldMap({
   const countries = useCountries();
 
   useEffect(() => {
-    if (globeRef.current) {
-      const controls = globeRef.current.controls();
-      controls.autoRotate = false;
-      controls.enabled = true;
-    }
-  }, []);
-
-  useEffect(() => {
     if (selectedCountry && globeRef.current && countries.length > 0) {
       const countryFeature = countries.find(
         (feature) => feature.properties.ISO_A2 === selectedCountry
@@ -62,36 +54,36 @@ export default function WorldMap({
             ? "//unpkg.com/three-globe/example/img/earth-night.jpg"
             : "//unpkg.com/three-globe/example/img/earth-day.jpg"
         }
-        pointLabel="name"
-        pointRadius={0.5}
-        pointAltitude={0.1}
+        hexPolygonsData={countries}
+        hexPolygonResolution={3}
+        hexPolygonMargin={0.3}
+        hexPolygonColor={(d) => {
+          const country = d as CountryFeature;
+          return country.properties.ISO_A2 === selectedCountry
+          ? "#ff5233"
+            : isDarkMode 
+              ? "rgba(255,255,255,0.1)"
+              : "rgba(0,0,0,0.1)"
+        }}
+        hexPolygonLabel={(d) => {
+          const country = d as CountryFeature;
+          return `
+            <div class="bg-black/80 p-2 rounded-lg">
+              <div class="text-white">${country.properties.ADMIN}</div>
+              <div class="text-gray-400">Click to select</div>
+            </div>
+          `;
+        }}
+        onHexPolygonClick={(polygon) => {
+          const country = polygon as CountryFeature;
+          onCountryClick(country.properties.ISO_A2);
+        }}
         backgroundColor="rgba(0,0,0,0)"
         width={size.width}
         height={size.height}
         animateIn={true}
         atmosphereColor={isDarkMode ? "#ffffff" : "#1f1f1f"}
         atmosphereAltitude={0.1}
-        hexPolygonResolution={3}
-        hexPolygonMargin={0.3}
-        hexPolygonColor={(d: any) => {
-          const country = d as CountryFeature;
-          return country.properties.ISO_A2 === selectedCountry
-            ? "#ff5233"
-            : "#1f2937";
-        }}
-        onHexPolygonClick={(polygon: any) => {
-          const country = polygon as CountryFeature;
-          onCountryClick(country.properties.ISO_A2);
-        }}
-        hexPolygonLabel={(d: any) => {
-          const country = d as CountryFeature;
-          return `
-            <div class="bg-black/80 p-2 rounded-lg">
-              <div class="text-white">${country.properties.NAME}</div>
-              <div class="text-gray-400">Click to select</div>
-            </div>
-          `;
-        }}
       />
     </div>
   );
