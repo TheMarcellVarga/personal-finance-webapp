@@ -52,7 +52,7 @@ export default function WorldMap({
   }, [selectedCountry, countries]);
 
   return (
-    <Card className="h-full"> {/* Changed from w-full max-w-2xl mx-auto */}
+    <Card className="h-full">
       <CardHeader>
         <CardTitle>World Map</CardTitle>
         <CardDescription>

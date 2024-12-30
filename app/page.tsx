@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -26,7 +25,9 @@ export default function Home() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight">Personal Finance Assistant</h1>
+        <h1 className="text-4xl font-bold tracking-tight">
+          Personal Finance Assistant
+        </h1>
         <p className="text-lg text-muted-foreground mt-2">
           Calculate your taxes and explore financial information worldwide
         </p>
