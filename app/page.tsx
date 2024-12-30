@@ -16,24 +16,31 @@ const WorldMap = dynamic(() => import("@/components/WorldMap"), {
 });
 
 export default function Home() {
-  const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const handleCountrySelect = (country: string) => {
+    setSelectedCountry(country);
+  };
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-4xl font-bold text-center mb-8">
-        Global Tax Calculator
-      </h1>
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold tracking-tight">Personal Finance Assistant</h1>
+        <p className="text-lg text-muted-foreground mt-2">
+          Calculate your taxes and explore financial information worldwide
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="flex justify-center items-start">
-          <TaxCalculator onCountrySelect={setSelectedCountry} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+        <div className="h-full">
+          <TaxCalculator onCountrySelect={handleCountrySelect} />
         </div>
-
-        <div className="bg-card rounded-lg shadow-lg p-4">
+        <div className="h-full">
           <WorldMap
+            isDarkMode={isDarkMode}
             selectedCountry={selectedCountry}
-            onCountryClick={setSelectedCountry}
-            isDarkMode={false}
+            onCountryClick={handleCountrySelect}
           />
         </div>
       </div>

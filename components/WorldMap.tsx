@@ -2,9 +2,16 @@
 
 import { useEffect, useRef } from "react";
 import Globe from "react-globe.gl";
-import { Feature, Geometry } from 'geojson';
-import bbox from '@turf/bbox';
+import { Feature, Geometry } from "geojson";
+import bbox from "@turf/bbox";
 import { CountryFeature, useCountries } from "@/hooks/useCountries";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface WorldMapProps {
   isDarkMode: boolean;
@@ -18,7 +25,7 @@ export default function WorldMap({
   onCountryClick,
 }: WorldMapProps) {
   const globeRef = useRef<any>(null);
-  const size = { width: 600, height: 600 };
+  const size = { width: 500, height: 500 }; // Adjust these values as needed
   const countries = useCountries();
 
   useEffect(() => {
@@ -45,45 +52,55 @@ export default function WorldMap({
   }, [selectedCountry, countries]);
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
-      <Globe
-        ref={globeRef}
-        globeImageUrl={
-          isDarkMode
-            ? "//unpkg.com/three-globe/example/img/earth-night.jpg"
-            : "//unpkg.com/three-globe/example/img/earth-day.jpg"
-        }
-        polygonsData={countries}
-        polygonCapColor={(d) => {
-          const country = d as CountryFeature;
-          return country.properties.ISO_A2 === selectedCountry
-          ? "#ff5233"
-            : isDarkMode 
-              ? "rgba(255,255,255,0.1)"
-              : "rgba(0,0,0,0.1)"
-        }}
-        polygonSideColor={() => "rgba(0, 100, 0, 0.15)"}
-        polygonStrokeColor={() => "#111"}
-        polygonLabel={(d) => {
-          const country = d as CountryFeature;
-          return `
+    <Card className="h-full"> {/* Changed from w-full max-w-2xl mx-auto */}
+      <CardHeader>
+        <CardTitle>World Map</CardTitle>
+        <CardDescription>
+          Select a country to view its tax information
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="w-full h-full flex items-center justify-center">
+          <Globe
+            ref={globeRef}
+            globeImageUrl={
+              isDarkMode
+                ? "//unpkg.com/three-globe/example/img/earth-night.jpg"
+                : "//unpkg.com/three-globe/example/img/earth-day.jpg"
+            }
+            polygonsData={countries}
+            polygonCapColor={(d) => {
+              const country = d as CountryFeature;
+              return country.properties.ISO_A2 === selectedCountry
+                ? "#ff5233"
+                : isDarkMode
+                ? "rgba(255,255,255,0.1)"
+                : "rgba(0,0,0,0.1)";
+            }}
+            polygonSideColor={() => "rgba(0, 100, 0, 0.15)"}
+            polygonStrokeColor={() => "#111"}
+            polygonLabel={(d) => {
+              const country = d as CountryFeature;
+              return `
             <div class="bg-black/80 p-2 rounded-lg">
               <div class="text-white">${country.properties.ADMIN}</div>
               <div class="text-gray-400">Click to select</div>
             </div>
           `;
-        }}
-        onPolygonClick={(polygon) => {
-          const country = polygon as CountryFeature;
-          onCountryClick(country.properties.ISO_A2);
-        }}
-        backgroundColor="rgba(0,0,0,0)"
-        width={size.width}
-        height={size.height}
-        animateIn={true}
-        atmosphereColor={isDarkMode ? "#ffffff" : "#1f1f1f"}
-        atmosphereAltitude={0.1}
-      />
-    </div>
+            }}
+            onPolygonClick={(polygon) => {
+              const country = polygon as CountryFeature;
+              onCountryClick(country.properties.ISO_A2);
+            }}
+            backgroundColor="rgba(0,0,0,0)"
+            width={size.width}
+            height={size.height}
+            animateIn={true}
+            atmosphereColor={isDarkMode ? "#ffffff" : "#1f1f1f"}
+            atmosphereAltitude={0.1}
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
