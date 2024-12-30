@@ -51,6 +51,15 @@ export default function WorldMap({
     }
   }, [selectedCountry, countries]);
 
+  useEffect(() => {
+    if (globeRef.current) {
+      const controls = globeRef.current.controls();
+      controls.autoRotate = !selectedCountry;
+      controls.autoRotateSpeed = 0.5;
+      controls.enabled = true;
+    }
+  }, [globeRef, selectedCountry]);
+
   return (
     <Card className="h-full">
       <CardHeader>
