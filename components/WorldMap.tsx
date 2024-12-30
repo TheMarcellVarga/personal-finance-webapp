@@ -55,7 +55,7 @@ export default function WorldMap({
     if (globeRef.current) {
       const controls = globeRef.current.controls();
       controls.autoRotate = !selectedCountry;
-      controls.autoRotateSpeed = 0.5;
+      controls.autoRotateSpeed = 0.75;
       controls.enabled = true;
     }
   }, [globeRef, selectedCountry]);
