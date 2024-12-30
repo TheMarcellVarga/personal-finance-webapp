@@ -323,6 +323,21 @@ export const getCurrencySymbol = (currency: string): string => {
     LKR: "₨",
     PKR: "₨",
     NPR: "₨",
+    BTC: "₿",
+    ETH: "Ξ",
+    USDT: "₮",
+    BNB: "BNB",
+    XRP: "XRP",
+    SOL: "SOL",
+    ADA: "₳",
+    DOGE: "Ð",
+    DOT: "DOT",
+    MATIC: "MATIC",
+    SHIB: "SHIB",
+    LTC: "Ł",
+    LINK: "LINK",
+    UNI: "UNI",
+    AVAX: "AVAX",
   };
   return symbols[currency] || currency;
 };
@@ -393,9 +408,22 @@ export const availableCurrencies = [
   { value: "XCD", label: "XCD ($) - East Caribbean Dollar", symbol: "$" },
   { value: "XPF", label: "XPF (₣) - CFP Franc", symbol: "₣" },
 
-  // Cryptocurrencies (if needed)
+  // Cryptocurrencies
   { value: "BTC", label: "BTC (₿) - Bitcoin", symbol: "₿" },
   { value: "ETH", label: "ETH (Ξ) - Ethereum", symbol: "Ξ" },
+  { value: "USDT", label: "USDT (₮) - Tether", symbol: "₮" },
+  { value: "BNB", label: "BNB - Binance Coin", symbol: "BNB" },
+  { value: "XRP", label: "XRP - Ripple", symbol: "XRP" },
+  { value: "SOL", label: "SOL - Solana", symbol: "SOL" },
+  { value: "ADA", label: "ADA (₳) - Cardano", symbol: "₳" },
+  { value: "DOGE", label: "DOGE (Ð) - Dogecoin", symbol: "Ð" },
+  { value: "DOT", label: "DOT - Polkadot", symbol: "DOT" },
+  { value: "MATIC", label: "MATIC - Polygon", symbol: "MATIC" },
+  { value: "SHIB", label: "SHIB - Shiba Inu", symbol: "SHIB" },
+  { value: "LTC", label: "LTC (Ł) - Litecoin", symbol: "Ł" },
+  { value: "LINK", label: "LINK - Chainlink", symbol: "LINK" },
+  { value: "UNI", label: "UNI - Uniswap", symbol: "UNI" },
+  { value: "AVAX", label: "AVAX - Avalanche", symbol: "AVAX" },
 ];
 
 // Optional: Add currency groups for better organization in UI
@@ -431,7 +459,23 @@ export const currencyGroups = {
   ],
   other: ["RUB", "UAH", "KZT"],
   regional: ["XAF", "XOF", "XCD", "XPF"],
-  crypto: ["BTC", "ETH"],
+  crypto: [
+    "BTC", 
+    "ETH", 
+    "USDT", 
+    "BNB", 
+    "XRP", 
+    "SOL", 
+    "ADA", 
+    "DOGE", 
+    "DOT", 
+    "MATIC", 
+    "SHIB", 
+    "LTC", 
+    "LINK", 
+    "UNI", 
+    "AVAX"
+  ],
 };
 
 // Helper function to get currency info
