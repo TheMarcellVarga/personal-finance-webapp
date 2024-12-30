@@ -1,4 +1,3 @@
-// hooks/useExchangeRates.ts
 import { useState, useEffect } from 'react';
 
 export function useExchangeRates() {

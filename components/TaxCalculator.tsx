@@ -23,8 +23,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useCountries } from "@/hooks/useCountries";
-import { availableCurrencies, currencyGroups } from "@/utils/currencyMappings";
-
+import {
+  availableCurrencies,
+  currencyGroups,
+  getCountryCurrency,
+} from "@/utils/currencyMappings";
 interface TaxCalculatorProps {
   onCountrySelect: (country: string) => void;
   selectedCountry: string;
@@ -80,13 +83,7 @@ export default function TaxCalculator({
     const country = countries.find(
       (c) => c.properties.ISO_A2 === selectedCountry
     );
-    const currencyMap: Record<string, string> = {
-      US: "USD",
-      GB: "GBP",
-      DE: "EUR",
-      // Add more mappings as needed
-    };
-    return currencyMap[country?.properties.ISO_A2 ?? "US"] ?? "USD";
+    return getCountryCurrency(country?.properties.ISO_A2 ?? "US");
   }, [selectedCountry, countries]);
 
   const handleCalculate = () => {
