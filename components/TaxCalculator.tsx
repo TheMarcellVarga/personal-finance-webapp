@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +8,10 @@ import { useTaxStore } from "@/store/taxStore";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -20,17 +23,46 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useCountries } from "@/hooks/useCountries";
+import { availableCurrencies, currencyGroups } from "@/utils/currencyMappings";
 
 interface TaxCalculatorProps {
   onCountrySelect: (country: string) => void;
   selectedCountry: string;
 }
 
-export default function TaxCalculator({ 
-  onCountrySelect, 
-  selectedCountry 
+const formatCurrency = (amount: number, currency: string) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+
+const getExchangeRate = (from: string, to: string) => {
+  // This is a simplified example - you should use a real exchange rate API
+  const rates: Record<string, Record<string, number>> = {
+    USD: { EUR: 0.92, GBP: 0.79, JPY: 148.41 },
+    EUR: { USD: 1.09, GBP: 0.86, JPY: 161.32 },
+    GBP: { USD: 1.27, EUR: 1.17, JPY: 187.58 },
+    JPY: { USD: 0.0067, EUR: 0.0062, GBP: 0.0053 },
+  };
+
+  if (from === to) return 1;
+  return rates[from]?.[to] ?? 1;
+};
+
+const CurrencyDisplay = ({ code }: { code: string }) => {
+  const currency = availableCurrencies.find((c) => c.value === code);
+  return currency ? `${currency.value} (${currency.symbol})` : code;
+};
+
+export default function TaxCalculator({
+  onCountrySelect,
+  selectedCountry,
 }: TaxCalculatorProps) {
   const [income, setIncome] = useState<string>("");
+  const [localCurrency, setLocalCurrency] = useState<string>("USD");
   const { calculateTax } = useTaxStore();
   const countries = useCountries();
   const [taxResult, setTaxResult] = useState<{
@@ -43,6 +75,19 @@ export default function TaxCalculator({
     }>;
     socialSecurity?: number;
   } | null>(null);
+
+  const selectedCountryCurrency = useMemo(() => {
+    const country = countries.find(
+      (c) => c.properties.ISO_A2 === selectedCountry
+    );
+    const currencyMap: Record<string, string> = {
+      US: "USD",
+      GB: "GBP",
+      DE: "EUR",
+      // Add more mappings as needed
+    };
+    return currencyMap[country?.properties.ISO_A2 ?? "US"] ?? "USD";
+  }, [selectedCountry, countries]);
 
   const handleCalculate = () => {
     if (!income || !selectedCountry) return;
@@ -77,7 +122,6 @@ export default function TaxCalculator({
                 </SelectTrigger>
                 <SelectContent>
                   {countries
-                    // Filter out invalid or duplicate ISO codes
                     .filter(
                       (country, index, self) =>
                         country.properties.ISO_A2 !== "-" &&
@@ -88,7 +132,6 @@ export default function TaxCalculator({
                               c.properties.ISO_A2 === country.properties.ISO_A2
                           )
                     )
-                    // Sort by country name
                     .sort((a, b) =>
                       a.properties.ADMIN.localeCompare(b.properties.ADMIN)
                     )
@@ -106,13 +149,52 @@ export default function TaxCalculator({
 
             <div className="space-y-2">
               <Label htmlFor="income">Annual Income</Label>
-              <Input
-                id="income"
-                type="number"
-                value={income}
-                onChange={(e) => setIncome(e.target.value)}
-                placeholder="Enter your annual income"
-              />
+              <div className="flex space-x-2">
+                <div className="flex-1">
+                  <Input
+                    id="income"
+                    type="number"
+                    value={income}
+                    onChange={(e) => setIncome(e.target.value)}
+                    placeholder="Enter amount"
+                    className="w-full"
+                  />
+                </div>
+                <Select value={localCurrency} onValueChange={setLocalCurrency}>
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue>
+                      {localCurrency && (
+                        <CurrencyDisplay code={localCurrency} />
+                      )}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(currencyGroups).map(
+                      ([group, currencies]: [string, string[]]) => (
+                        <SelectGroup key={group}>
+                          <SelectLabel className="capitalize">
+                            {group.replace(/([A-Z])/g, " $1").trim()}
+                          </SelectLabel>
+                          {currencies.map((code: string) => {
+                            const currency = availableCurrencies.find(
+                              (c) => c.value === code
+                            );
+                            return currency ? (
+                              <SelectItem key={code} value={code}>
+                                {currency.label}
+                              </SelectItem>
+                            ) : null;
+                          })}
+                          <SelectSeparator />
+                        </SelectGroup>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Enter amount in {localCurrency}
+              </p>
             </div>
 
             <Button onClick={handleCalculate} className="w-full">
@@ -141,16 +223,28 @@ export default function TaxCalculator({
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Total Tax</p>
-                    <p className="text-2xl font-bold">
-                      {taxResult.totalTax.toLocaleString("en-US", {
-                        style: "currency",
-                        currency:
-                          countries.find(
-                            (c) => c.properties.ISO_A2 === selectedCountry
-                          )?.properties.currency || "USD",
-                      })}
+                    <p className="text-sm text-muted-foreground">
+                      Total Tax ({selectedCountryCurrency})
                     </p>
+                    <p className="text-2xl font-bold">
+                      {formatCurrency(
+                        taxResult.totalTax,
+                        selectedCountryCurrency
+                      )}
+                    </p>
+                    {localCurrency !== selectedCountryCurrency && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        ≈{" "}
+                        {formatCurrency(
+                          taxResult.totalTax *
+                            getExchangeRate(
+                              selectedCountryCurrency,
+                              localCurrency
+                            ),
+                          localCurrency
+                        )}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">
@@ -172,15 +266,24 @@ export default function TaxCalculator({
                       <span>
                         {bracket.bracket} ({(bracket.rate * 100).toFixed(0)}%)
                       </span>
-                      <span className="font-medium">
-                        {bracket.tax.toLocaleString("en-US", {
-                          style: "currency",
-                          currency:
-                            countries.find(
-                              (c) => c.properties.ISO_A2 === selectedCountry
-                            )?.properties.currency || "USD",
-                        })}
-                      </span>
+                      <div className="text-right">
+                        <span className="font-medium">
+                          {formatCurrency(bracket.tax, selectedCountryCurrency)}
+                        </span>
+                        {localCurrency !== selectedCountryCurrency && (
+                          <div className="text-sm text-muted-foreground">
+                            ≈{" "}
+                            {formatCurrency(
+                              bracket.tax *
+                                getExchangeRate(
+                                  selectedCountryCurrency,
+                                  localCurrency
+                                ),
+                              localCurrency
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -189,18 +292,38 @@ export default function TaxCalculator({
                   <div className="space-y-2">
                     <h3 className="text-lg font-semibold">Social Security</h3>
                     <div className="p-2 bg-muted rounded">
-                      <span className="font-medium">
-                        {taxResult.socialSecurity.toLocaleString("en-US", {
-                          style: "currency",
-                          currency:
-                            countries.find(
-                              (c) => c.properties.ISO_A2 === selectedCountry
-                            )?.properties.currency || "USD",
-                        })}
-                      </span>
+                      <div className="text-right">
+                        <span className="font-medium">
+                          {formatCurrency(
+                            taxResult.socialSecurity,
+                            selectedCountryCurrency
+                          )}
+                        </span>
+                        {localCurrency !== selectedCountryCurrency && (
+                          <div className="text-sm text-muted-foreground">
+                            ≈{" "}
+                            {formatCurrency(
+                              taxResult.socialSecurity *
+                                getExchangeRate(
+                                  selectedCountryCurrency,
+                                  localCurrency
+                                ),
+                              localCurrency
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}
+
+                <div className="mt-4 p-4 bg-muted rounded">
+                  <p className="text-sm text-muted-foreground">
+                    * Exchange rates are approximate and updated daily. For
+                    accurate conversions, please verify with your financial
+                    institution.
+                  </p>
+                </div>
               </>
             )}
           </CardContent>
