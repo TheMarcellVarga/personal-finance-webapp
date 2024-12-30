@@ -1,10 +1,12 @@
+// app/page.tsx
 "use client";
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import TaxCalculator from "@/components/TaxCalculator";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 
-// Dynamically import WorldMap to avoid SSR issues
 const WorldMap = dynamic(() => import("@/components/WorldMap"), {
   ssr: false,
   loading: () => (
@@ -22,29 +24,41 @@ export default function Home() {
     setSelectedCountry(country);
   };
 
-  return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight">
-          Personal Finance Assistant
-        </h1>
-        <p className="text-lg text-muted-foreground mt-2">
-          Calculate your taxes and explore financial information worldwide
-        </p>
-      </div>
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-        <div className="h-full">
-          <TaxCalculator onCountrySelect={handleCountrySelect} />
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+
+      <main className="flex-1 py-6">
+        <div className="container mx-auto px-6 space-y-6">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold tracking-tight">
+              Personal Finance Assistant
+            </h1>
+            <p className="text-lg text-muted-foreground mt-2">
+              Calculate your taxes and explore financial information worldwide
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="h-full">
+              <TaxCalculator onCountrySelect={handleCountrySelect} />
+            </div>
+            <div className="h-full">
+              <WorldMap
+                isDarkMode={isDarkMode}
+                selectedCountry={selectedCountry}
+                onCountryClick={handleCountrySelect}
+              />
+            </div>
+          </div>
         </div>
-        <div className="h-full">
-          <WorldMap
-            isDarkMode={isDarkMode}
-            selectedCountry={selectedCountry}
-            onCountryClick={handleCountrySelect}
-          />
-        </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }
