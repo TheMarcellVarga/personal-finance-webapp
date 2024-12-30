@@ -23,13 +23,16 @@ import { useCountries } from "@/hooks/useCountries";
 
 interface TaxCalculatorProps {
   onCountrySelect: (country: string) => void;
+  selectedCountry: string;
 }
 
-export default function TaxCalculator({ onCountrySelect }: TaxCalculatorProps) {
+export default function TaxCalculator({ 
+  onCountrySelect, 
+  selectedCountry 
+}: TaxCalculatorProps) {
   const [income, setIncome] = useState<string>("");
   const { calculateTax } = useTaxStore();
   const countries = useCountries();
-  const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [taxResult, setTaxResult] = useState<{
     totalTax: number;
     effectiveRate: number;
@@ -49,7 +52,6 @@ export default function TaxCalculator({ onCountrySelect }: TaxCalculatorProps) {
   };
 
   const handleCountryChange = (value: string) => {
-    setSelectedCountry(value);
     onCountrySelect(value);
   };
 

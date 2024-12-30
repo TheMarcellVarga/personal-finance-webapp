@@ -45,7 +45,10 @@ export default function Home() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="h-full">
-              <TaxCalculator onCountrySelect={handleCountrySelect} />
+              <TaxCalculator
+                onCountrySelect={handleCountrySelect}
+                selectedCountry={selectedCountry}
+              />
             </div>
             <div className="h-full">
               <WorldMap
