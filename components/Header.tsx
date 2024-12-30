@@ -22,7 +22,7 @@ export function Header({ isDarkMode, toggleDarkMode }: HeaderProps) {
     <header className="border-b">
       <div className="container mx-auto px-6 h-16 flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h2 className="text-2xl font-bold">FreeFiny</h2>
+          <h2 className="text-2xl font-bold">FinAdventurer</h2>
         </div>
 
         <div className="flex items-center space-x-4">
