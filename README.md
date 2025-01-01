@@ -1,4 +1,3 @@
-```markdown
 # Personal Finance Assistant 🌍💰
 
 A personal project that combines interactive 3D visualization with practical financial tools. Built with Next.js, Three.js, and TypeScript, this web application helps users explore global tax systems through an engaging interface.
@@ -111,4 +110,3 @@ Built with:
 ---
 
 *This is a personal project built for learning and demonstration purposes.*
-```
