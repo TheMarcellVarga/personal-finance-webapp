@@ -1,11 +1,10 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Header } from "@/components/Header";
 import "./globals.css";
-import { AuthProvider } from "@/lib/auth-context";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Global Tax Calculator",
   description: "Calculate income tax across different countries",
 };
@@ -17,11 +16,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <AuthProvider>
+      <ClerkProvider
+        appearance={{
+          elements: {
+            formButtonPrimary: "bg-primary hover:bg-primary/90",
+            card: "shadow-none",
+          },
+        }}
+        publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      >
+        <body className={inter.className}>
           <main className="min-h-screen bg-background">{children}</main>
-        </AuthProvider>
-      </body>
+        </body>
+      </ClerkProvider>
     </html>
   );
 }
