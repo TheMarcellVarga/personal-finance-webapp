@@ -5,6 +5,7 @@ import { Calculator, Globe, ArrowLeftRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FeatureCard } from "@/components/ui/feature-card";
 import { Step } from "@/components/ui/step";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 export default function Home() {
   return (
@@ -18,11 +19,20 @@ export default function Home() {
           <p className="text-xl text-muted-foreground mb-8">
             Navigate worldwide tax systems with our interactive 3D visualization
           </p>
-          <Link href="/calculator">
-            <Button size="lg" className="rounded-full">
-              Get Started
-            </Button>
-          </Link>
+          <SignedIn>
+            <Link href="/calculator">
+              <Button size="lg" className="rounded-full">
+                Continue Exploring
+              </Button>
+            </Link>
+          </SignedIn>
+          <SignedOut>
+            <Link href="/auth">
+              <Button size="lg" className="rounded-full">
+                Start Exploring
+              </Button>
+            </Link>
+          </SignedOut>
         </div>
       </section>
 
