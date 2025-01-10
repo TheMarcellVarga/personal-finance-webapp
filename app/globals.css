@@ -70,11 +70,3 @@ body {
     @apply bg-background text-foreground;
   }
 }
-
-@layer utilities {
-  .bg-grid-pattern {
-    background-size: 50px 50px;
-    background-image: linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
-  }
-}

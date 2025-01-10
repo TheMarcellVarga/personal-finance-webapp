@@ -1,135 +1,133 @@
 "use client";
 
 import Link from "next/link";
-import { Calculator, Globe, ArrowLeftRight, MousePointer2 } from "lucide-react";
+import { Calculator, Globe, ArrowLeftRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FeatureCard } from "@/components/ui/feature-card";
 import { Step } from "@/components/ui/step";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
-import { motion } from "framer-motion";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background">
       {/* Hero Section */}
       <section className="h-screen relative flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 w-full h-full bg-grid-white/[0.02] bg-grid-pattern" />
-        <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="container mx-auto px-6 text-center relative z-10"
-          >
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.5 }}
-              className="mb-6"
-            >
-              <h1 className="text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/50">
-                Global Tax Intelligence
-              </h1>
-            </motion.div>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-xl text-muted-foreground mb-8"
-            >
-              Navigate worldwide tax systems with our interactive 3D visualization
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-            >
-              <SignedIn>
-                <Link href="/calculator">
-                  <Button size="lg" className="rounded-full bg-primary hover:bg-primary/80 hover:scale-105 transition-all duration-300 shadow-lg shadow-primary/25">
-                    Continue Exploring
-                  </Button>
-                </Link>
-              </SignedIn>
-              <SignedOut>
-                <Link href="/auth">
-                  <Button size="lg" className="rounded-full bg-primary hover:bg-primary/80 hover:scale-105 transition-all duration-300 shadow-lg shadow-primary/25">
-                    Start Exploring
-                  </Button>
-                </Link>
-              </SignedOut>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.9 }}
-              className="mt-12 flex items-center justify-center gap-2 text-muted-foreground"
-            >
-              <MousePointer2 className="h-4 w-4 animate-bounce" />
-              <span>Scroll to explore more</span>
-            </motion.div>
-          </motion.div>
+        {/* Animated grid background */}
+        <div className="absolute inset-0 w-full h-full bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:50px_50px]" />
+        
+        {/* Floating orbs decoration */}
+        <div className="absolute top-20 left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse delay-700" />
+
+        <div className="container mx-auto px-6 text-center relative z-10">
+          <h1 className="text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/50 to-primary animate-in fade-in slide-in-from-bottom-10 duration-1000 leading-tight">
+            Global Tax Intelligence
+          </h1>
+          <p className="text-xl text-muted-foreground mb-8 animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-200">
+            Navigate worldwide tax systems with our interactive 3D visualization
+          </p>
+          <div className="animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
+            <SignedIn>
+              <Link href="/calculator">
+                <Button 
+                  size="lg" 
+                  className="rounded-full bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5"
+                >
+                  Continue Exploring
+                </Button>
+              </Link>
+            </SignedIn>
+            <SignedOut>
+              <Link href="/auth">
+                <Button 
+                  size="lg" 
+                  className="rounded-full bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5"
+                >
+                  Start Exploring
+                </Button>
+              </Link>
+            </SignedOut>
+          </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-32 relative">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="container mx-auto px-6"
-        >
+      <section className="py-20 relative">
+        <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FeatureCard
-              icon={<Globe className="h-6 w-6 text-primary" />}
-              title="Interactive 3D Globe"
-              description="Explore tax systems across different countries through an immersive visualization"
-            />
-            <FeatureCard
-              icon={<Calculator className="h-6 w-6 text-primary" />}
-              title="Real-time Calculations"
-              description="Get instant tax calculations with support for multiple currencies"
-            />
-            <FeatureCard
-              icon={<ArrowLeftRight className="h-6 w-6 text-primary" />}
-              title="Country Comparison"
-              description="Compare tax rates and systems between different countries"
-            />
+            {[
+              {
+                icon: <Globe className="h-6 w-6 text-primary" />,
+                title: "Interactive 3D Globe",
+                description: "Explore tax systems across different countries through an immersive visualization"
+              },
+              {
+                icon: <Calculator className="h-6 w-6 text-primary" />,
+                title: "Real-time Calculations",
+                description: "Get instant tax calculations with support for multiple currencies"
+              },
+              {
+                icon: <ArrowLeftRight className="h-6 w-6 text-primary" />,
+                title: "Country Comparison",
+                description: "Compare tax rates and systems between different countries"
+              }
+            ].map((feature, index) => (
+              <div 
+                key={index}
+                className="group p-6 rounded-2xl bg-secondary/40 backdrop-blur-sm border border-primary/10 hover:bg-secondary/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/20"
+              >
+                <div className="flex flex-col items-center text-center space-y-4">
+                  <div className="p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-xl font-semibold">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        </motion.div>
+        </div>
       </section>
 
       {/* How It Works Section */}
-      <section className="py-32 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="container mx-auto px-6 relative"
-        >
-          <h2 className="text-4xl font-bold text-center mb-12">How It Works</h2>
+      <section className="py-20 relative bg-secondary/10">
+        <div className="container mx-auto px-6">
+          <h2 className="text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+            How It Works
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Step
-              number="1"
-              title="Select a Country"
-              description="Choose your country of interest on our interactive globe"
-            />
-            <Step
-              number="2"
-              title="Enter Income Details"
-              description="Input your income and personal details"
-            />
-            <Step
-              number="3"
-              title="Get Insights"
-              description="Receive detailed tax calculations and comparisons"
-            />
+            {[
+              {
+                number: "1",
+                title: "Select a Country",
+                description: "Choose your country of interest on our interactive globe"
+              },
+              {
+                number: "2",
+                title: "Enter Income Details",
+                description: "Input your income and personal details"
+              },
+              {
+                number: "3",
+                title: "Get Insights",
+                description: "Receive detailed tax calculations and comparisons"
+              }
+            ].map((step, index) => (
+              <div 
+                key={index}
+                className="relative p-6 rounded-2xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:bg-background/70 transition-all duration-300 group"
+              >
+                <div className="absolute -top-4 -left-4 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg group-hover:scale-110 transition-transform duration-300">
+                  {step.number}
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
+                  <p className="text-muted-foreground">{step.description}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        </motion.div>
+        </div>
       </section>
     </div>
   );
