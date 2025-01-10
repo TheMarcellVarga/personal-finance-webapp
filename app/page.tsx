@@ -3,21 +3,26 @@
 import Link from "next/link";
 import { Calculator, Globe, ArrowLeftRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FeatureCard } from "@/components/ui/feature-card";
-import { Step } from "@/components/ui/step";
+// import { FeatureCard } from "@/components/ui/feature-card";
+// import { Step } from "@/components/ui/step";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
+import Image from "next/image";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background">
       {/* Hero Section */}
       <section className="h-screen relative flex items-center justify-center overflow-hidden">
-        {/* Animated grid background */}
-        <div className="absolute inset-0 w-full h-full bg-[linear-gradient(to_right,rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:50px_50px]" />
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-50 pointer-events-none">
+          <Image
+            src="/images/globe-wireframe.png"
+            alt="Globe Wireframe"
+            width={600}
+            height={600}
+            className="animate-spin-slow"
+          />
+        </div>
         
-        {/* Floating orbs decoration */}
-        <div className="absolute top-20 left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse delay-700" />
 
         <div className="container mx-auto px-6 text-center relative z-10">
           <h1 className="text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/50 to-primary animate-in fade-in slide-in-from-bottom-10 duration-1000 leading-tight">
@@ -53,6 +58,14 @@ export default function Home() {
 
       {/* Features Section */}
       <section className="py-20 relative">
+        <div className="absolute inset-0 opacity-10">
+          <Image
+            src="/images/grid-pattern.png"
+            alt="Grid Pattern"
+            fill
+            className="object-cover"
+          />
+        </div>
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -100,17 +113,20 @@ export default function Home() {
               {
                 number: "1",
                 title: "Select a Country",
-                description: "Choose your country of interest on our interactive globe"
+                description: "Choose your country of interest on our interactive globe",
+                image: "/images/select-country.png"
               },
               {
                 number: "2",
                 title: "Enter Income Details",
-                description: "Input your income and personal details"
+                description: "Input your income and personal details",
+                image: "/images/income-details.png"
               },
               {
                 number: "3",
                 title: "Get Insights",
-                description: "Receive detailed tax calculations and comparisons"
+                description: "Receive detailed tax calculations and comparisons",
+                image: "/images/insights.png"
               }
             ].map((step, index) => (
               <div 
@@ -120,6 +136,14 @@ export default function Home() {
                 <div className="absolute -top-4 -left-4 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg group-hover:scale-110 transition-transform duration-300">
                   {step.number}
                 </div>
+              <div className="mb-6 h-48 relative">
+                <Image
+                  src={step.image}
+                  alt={step.title}
+                  fill
+                  className="object-contain"
+                />
+              </div>
                 <div className="mt-4">
                   <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
                   <p className="text-muted-foreground">{step.description}</p>
