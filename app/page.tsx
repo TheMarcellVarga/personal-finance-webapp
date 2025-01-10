@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 // import { Step } from "@/components/ui/step";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+// Dynamically import the Globe component to avoid SSR issues
+const WireframeGlobe = dynamic(() => import("@/components/WireframeGlobe"), {
+  ssr: false,
+});
 
 export default function Home() {
   return (
@@ -14,15 +20,8 @@ export default function Home() {
       {/* Hero Section */}
       <section className="h-screen relative flex items-center justify-center overflow-hidden">
         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-50 pointer-events-none">
-          <Image
-            src="/images/globe-wireframe.png"
-            alt="Globe Wireframe"
-            width={600}
-            height={600}
-            className="animate-spin-slow"
-          />
+          <WireframeGlobe />
         </div>
-        
 
         <div className="container mx-auto px-6 text-center relative z-10">
           <h1 className="text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/50 to-primary animate-in fade-in slide-in-from-bottom-10 duration-1000 leading-tight">
@@ -34,8 +33,8 @@ export default function Home() {
           <div className="animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
             <SignedIn>
               <Link href="/calculator">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="rounded-full bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5"
                 >
                   Continue Exploring
@@ -44,8 +43,8 @@ export default function Home() {
             </SignedIn>
             <SignedOut>
               <Link href="/auth">
-                <Button 
-                  size="lg" 
+                <Button
+                  size="lg"
                   className="rounded-full bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5"
                 >
                   Start Exploring
@@ -72,20 +71,23 @@ export default function Home() {
               {
                 icon: <Globe className="h-6 w-6 text-primary" />,
                 title: "Interactive 3D Globe",
-                description: "Explore tax systems across different countries through an immersive visualization"
+                description:
+                  "Explore tax systems across different countries through an immersive visualization",
               },
               {
                 icon: <Calculator className="h-6 w-6 text-primary" />,
                 title: "Real-time Calculations",
-                description: "Get instant tax calculations with support for multiple currencies"
+                description:
+                  "Get instant tax calculations with support for multiple currencies",
               },
               {
                 icon: <ArrowLeftRight className="h-6 w-6 text-primary" />,
                 title: "Country Comparison",
-                description: "Compare tax rates and systems between different countries"
-              }
+                description:
+                  "Compare tax rates and systems between different countries",
+              },
             ].map((feature, index) => (
-              <div 
+              <div
                 key={index}
                 className="group p-6 rounded-2xl bg-secondary/40 backdrop-blur-sm border border-primary/10 hover:bg-secondary/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/20"
               >
@@ -113,37 +115,39 @@ export default function Home() {
               {
                 number: "1",
                 title: "Select a Country",
-                description: "Choose your country of interest on our interactive globe",
-                image: "/images/select-country.png"
+                description:
+                  "Choose your country of interest on our interactive globe",
+                image: "/images/select-country.png",
               },
               {
                 number: "2",
                 title: "Enter Income Details",
                 description: "Input your income and personal details",
-                image: "/images/income-details.png"
+                image: "/images/income-details.png",
               },
               {
                 number: "3",
                 title: "Get Insights",
-                description: "Receive detailed tax calculations and comparisons",
-                image: "/images/insights.png"
-              }
+                description:
+                  "Receive detailed tax calculations and comparisons",
+                image: "/images/insights.png",
+              },
             ].map((step, index) => (
-              <div 
+              <div
                 key={index}
                 className="relative p-6 rounded-2xl bg-background/50 backdrop-blur-sm border border-primary/10 hover:bg-background/70 transition-all duration-300 group"
               >
                 <div className="absolute -top-4 -left-4 w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg group-hover:scale-110 transition-transform duration-300">
                   {step.number}
                 </div>
-              <div className="mb-6 h-48 relative">
-                <Image
-                  src={step.image}
-                  alt={step.title}
-                  fill
-                  className="object-contain"
-                />
-              </div>
+                <div className="mb-6 h-48 relative">
+                  <Image
+                    src={step.image}
+                    alt={step.title}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
                 <div className="mt-4">
                   <h3 className="text-xl font-semibold mb-2">{step.title}</h3>
                   <p className="text-muted-foreground">{step.description}</p>
