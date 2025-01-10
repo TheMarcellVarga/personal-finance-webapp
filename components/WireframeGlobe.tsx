@@ -13,27 +13,33 @@ const WireframeGlobe = () => {
       controls.enableZoom = false;
       controls.enablePan = false;
       controls.enableDamping = true;
-      
-      globeRef.current.pointOfView({ altitude: 2.5 });
+      controls.enableDamping = false;
+      // Set initial position with tilt
+      globeRef.current.pointOfView({
+        lat: -30,
+        lng: 40,
+        altitude: 2.5 // Distance from globe
+      });
     }
   }, []);
 
   return (
     <Globe
       ref={globeRef}
-      width={600}
-      height={600}
+      width={1000}
+      height={1000}
       backgroundColor="rgba(0,0,0,0)"
       globeMaterial={
         new THREE.MeshPhongMaterial({
           wireframe: true,
           color: 'hsl(var(--primary))',
           transparent: true,
-          opacity: 0.3,
+          opacity: 10, // Increased from 0.3
+          wireframeLinewidth: 2, // Increased line width
         })
       }
-      atmosphereColor="hsl(var(--primary))"
       atmosphereAltitude={0.15}
+      atmosphereColor="hsl(var(--primary))"
       showGlobe={true}
       showAtmosphere={true}
     />

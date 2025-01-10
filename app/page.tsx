@@ -19,7 +19,8 @@ export default function Home() {
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background">
       {/* Hero Section */}
       <section className="h-screen relative flex items-center justify-center overflow-hidden">
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-50 pointer-events-none">
+        {/* Updated container size and positioning */}
+        <div className="absolute -right-20 top-1/2 -translate-y-2/3 w-[800px] h-[800px] opacity-50 pointer-events-none rotate-12">
           <WireframeGlobe />
         </div>
 
