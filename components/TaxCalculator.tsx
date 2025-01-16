@@ -190,7 +190,7 @@ export default function TaxCalculator({
                 </Select>
               </div>
               <p className="text-sm text-muted-foreground">
-                Enter amount in {localCurrency}
+                Enter amount in <CurrencyDisplay code={localCurrency} />
               </p>
             </div>
 
