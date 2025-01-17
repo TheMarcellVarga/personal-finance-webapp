@@ -217,12 +217,8 @@ export default function TaxCalculator({
                   </SelectContent>
                 </Select>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Enter {incomePeriod} amount in{" "}
-                <CurrencyDisplay code={localCurrency} />
-              </p>
             </div>
-
+            <div className="h-1" />
             <Button onClick={handleCalculate} className="w-full">
               Calculate Tax
             </Button>
