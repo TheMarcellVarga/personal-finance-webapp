@@ -55,6 +55,8 @@ const getExchangeRate = (from: string, to: string) => {
   return rates[from]?.[to] ?? 1;
 };
 
+const getMonthlyAmount = (amount: number) => amount / 12;
+
 const CurrencyDisplay = ({ code }: { code: string }) => {
   const currency = availableCurrencies.find((c) => c.value === code);
   return currency ? `${currency.value} (${currency.symbol})` : code;
@@ -66,6 +68,9 @@ export default function TaxCalculator({
 }: TaxCalculatorProps) {
   const [income, setIncome] = useState<string>("");
   const [localCurrency, setLocalCurrency] = useState<string>("USD");
+  const [incomePeriod, setIncomePeriod] = useState<"annual" | "monthly">(
+    "annual"
+  );
   const { calculateTax } = useTaxStore();
   const countries = useCountries();
   const [taxResult, setTaxResult] = useState<{
@@ -89,7 +94,10 @@ export default function TaxCalculator({
   const handleCalculate = () => {
     if (!income || !selectedCountry) return;
 
-    const result = calculateTax(Number(income), selectedCountry);
+    const annualIncome =
+      incomePeriod === "monthly" ? Number(income) * 12 : Number(income);
+
+    const result = calculateTax(annualIncome, selectedCountry);
     setTaxResult(result);
   };
 
@@ -145,7 +153,27 @@ export default function TaxCalculator({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="income">Annual Income</Label>
+              <div className="flex justify-between items-center">
+                <Label htmlFor="income">Income</Label>
+                <div className="flex items-center space-x-2 text-sm">
+                  <Button
+                    variant={incomePeriod === "monthly" ? "secondary" : "ghost"}
+                    size="sm"
+                    onClick={() => setIncomePeriod("monthly")}
+                    className="h-7"
+                  >
+                    Monthly
+                  </Button>
+                  <Button
+                    variant={incomePeriod === "annual" ? "secondary" : "ghost"}
+                    size="sm"
+                    onClick={() => setIncomePeriod("annual")}
+                    className="h-7"
+                  >
+                    Annual
+                  </Button>
+                </div>
+              </div>
               <div className="flex space-x-2">
                 <div className="flex-1">
                   <Input
@@ -153,7 +181,7 @@ export default function TaxCalculator({
                     type="number"
                     value={income}
                     onChange={(e) => setIncome(e.target.value)}
-                    placeholder="Enter amount"
+                    placeholder={`Enter ${incomePeriod} amount`}
                     className="w-full"
                   />
                 </div>
@@ -190,7 +218,8 @@ export default function TaxCalculator({
                 </Select>
               </div>
               <p className="text-sm text-muted-foreground">
-                Enter amount in <CurrencyDisplay code={localCurrency} />
+                Enter {incomePeriod} amount in{" "}
+                <CurrencyDisplay code={localCurrency} />
               </p>
             </div>
 
@@ -229,18 +258,40 @@ export default function TaxCalculator({
                         selectedCountryCurrency
                       )}
                     </p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Monthly:{" "}
+                      {formatCurrency(
+                        getMonthlyAmount(taxResult.totalTax),
+                        selectedCountryCurrency
+                      )}
+                    </p>
                     {localCurrency !== selectedCountryCurrency && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        ≈{" "}
-                        {formatCurrency(
-                          taxResult.totalTax *
-                            getExchangeRate(
-                              selectedCountryCurrency,
-                              localCurrency
+                      <>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          ≈{" "}
+                          {formatCurrency(
+                            taxResult.totalTax *
+                              getExchangeRate(
+                                selectedCountryCurrency,
+                                localCurrency
+                              ),
+                            localCurrency
+                          )}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Monthly: ≈{" "}
+                          {formatCurrency(
+                            getMonthlyAmount(
+                              taxResult.totalTax *
+                                getExchangeRate(
+                                  selectedCountryCurrency,
+                                  localCurrency
+                                )
                             ),
-                          localCurrency
-                        )}
-                      </p>
+                            localCurrency
+                          )}
+                        </p>
+                      </>
                     )}
                   </div>
                   <div>
