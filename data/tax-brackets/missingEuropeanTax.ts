@@ -1,0 +1,93 @@
+export const missingEuropeanTax = [
+  {
+    name: "Cyprus",
+    code: "CY",
+    currency: "EUR",
+    brackets: [
+      { min: 0, max: 19500, rate: 0 },
+      { min: 19501, max: 28000, rate: 0.2 },
+      { min: 28001, max: 36300, rate: 0.25 },
+      { min: 36301, max: 60000, rate: 0.3 },
+      { min: 60001, max: Infinity, rate: 0.35 },
+    ],
+    socialSecurity: {
+      rate: 0.083,
+    },
+  },
+  {
+    name: "Greece",
+    code: "GR",
+    currency: "EUR",
+    brackets: [
+      { min: 0, max: 10000, rate: 0.09 },
+      { min: 10001, max: 20000, rate: 0.22 },
+      { min: 20001, max: 30000, rate: 0.28 },
+      { min: 30001, max: 40000, rate: 0.36 },
+      { min: 40001, max: Infinity, rate: 0.44 },
+    ],
+    socialSecurity: {
+      rate: 0.141,
+    },
+  },
+  {
+    name: "Ireland",
+    code: "IE",
+    currency: "EUR",
+    brackets: [
+      { min: 0, max: 36800, rate: 0.2 },
+      { min: 36801, max: Infinity, rate: 0.4 },
+    ],
+    socialSecurity: {
+      rate: 0.04,
+      cap: 115000,
+    },
+  },
+  {
+    name: "Luxembourg",
+    code: "LU",
+    currency: "EUR",
+    brackets: [
+      { min: 0, max: 11265, rate: 0 },
+      { min: 11266, max: 13137, rate: 0.08 },
+      { min: 13138, max: 15009, rate: 0.09 },
+      { min: 15010, max: 16881, rate: 0.1 },
+      { min: 16882, max: 18753, rate: 0.11 },
+      { min: 18754, max: 20625, rate: 0.12 },
+      { min: 20626, max: 22569, rate: 0.14 },
+      { min: 22570, max: 24513, rate: 0.16 },
+      { min: 24514, max: 26457, rate: 0.18 },
+      { min: 26458, max: 28401, rate: 0.2 },
+      { min: 28402, max: 30345, rate: 0.22 },
+      { min: 30346, max: 32289, rate: 0.24 },
+      { min: 32290, max: 34233, rate: 0.26 },
+      { min: 34234, max: 36177, rate: 0.28 },
+      { min: 36178, max: 38121, rate: 0.3 },
+      { min: 38122, max: 40065, rate: 0.32 },
+      { min: 40066, max: 42009, rate: 0.34 },
+      { min: 42010, max: 43953, rate: 0.36 },
+      { min: 43954, max: 45897, rate: 0.38 },
+      { min: 45898, max: 100002, rate: 0.39 },
+      { min: 100003, max: 150000, rate: 0.4 },
+      { min: 150001, max: 200004, rate: 0.41 },
+      { min: 200005, max: Infinity, rate: 0.42 },
+    ],
+    socialSecurity: {
+      rate: 0.125,
+    },
+  },
+  {
+    name: "Malta",
+    code: "MT",
+    currency: "EUR",
+    brackets: [
+      { min: 0, max: 9100, rate: 0 },
+      { min: 9101, max: 14500, rate: 0.15 },
+      { min: 14501, max: 19500, rate: 0.25 },
+      { min: 19501, max: 60000, rate: 0.25 },
+      { min: 60001, max: Infinity, rate: 0.35 },
+    ],
+    socialSecurity: {
+      rate: 0.1,
+    },
+  },
+];
