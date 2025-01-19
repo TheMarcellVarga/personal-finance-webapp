@@ -300,6 +300,72 @@ export default function TaxCalculator({
                   </div>
                 </div>
 
+                {/* Add new section for After-Tax Income */}
+                <div className="grid grid-cols-2 gap-4 mt-4 p-4 bg-secondary rounded-lg">
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      After-Tax Income ({selectedCountryCurrency})
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {formatCurrency(
+                        Number(income) * (incomePeriod === "monthly" ? 12 : 1) -
+                          taxResult.totalTax,
+                        selectedCountryCurrency
+                      )}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Monthly:{" "}
+                      {formatCurrency(
+                        getMonthlyAmount(
+                          Number(income) *
+                            (incomePeriod === "monthly" ? 12 : 1) -
+                            taxResult.totalTax
+                        ),
+                        selectedCountryCurrency
+                      )}
+                    </p>
+                    {localCurrency !== selectedCountryCurrency && (
+                      <>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          ≈{" "}
+                          {formatCurrency(
+                            (Number(income) *
+                              (incomePeriod === "monthly" ? 12 : 1) -
+                              taxResult.totalTax) *
+                              getExchangeRate(
+                                selectedCountryCurrency,
+                                localCurrency
+                              ),
+                            localCurrency
+                          )}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Monthly: ≈{" "}
+                          {formatCurrency(
+                            getMonthlyAmount(
+                              (Number(income) *
+                                (incomePeriod === "monthly" ? 12 : 1) -
+                                taxResult.totalTax) *
+                                getExchangeRate(
+                                  selectedCountryCurrency,
+                                  localCurrency
+                                )
+                            ),
+                            localCurrency
+                          )}
+                        </p>
+                      </>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      Take-Home Percentage
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {(100 - taxResult.effectiveRate * 100).toFixed(2)}%
+                    </p>
+                  </div>
+                </div>
                 <div className="space-y-2">
                   <h3 className="text-lg font-semibold">Tax Breakdown</h3>
                   {taxResult.breakdown.map((bracket, index) => (
