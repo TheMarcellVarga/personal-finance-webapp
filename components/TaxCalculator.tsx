@@ -243,65 +243,7 @@ export default function TaxCalculator({
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      Total Tax ({selectedCountryCurrency})
-                    </p>
-                    <p className="text-2xl font-bold">
-                      {formatCurrency(
-                        taxResult.totalTax,
-                        selectedCountryCurrency
-                      )}
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Monthly:{" "}
-                      {formatCurrency(
-                        getMonthlyAmount(taxResult.totalTax),
-                        selectedCountryCurrency
-                      )}
-                    </p>
-                    {localCurrency !== selectedCountryCurrency && (
-                      <>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          ≈{" "}
-                          {formatCurrency(
-                            taxResult.totalTax *
-                              getExchangeRate(
-                                selectedCountryCurrency,
-                                localCurrency
-                              ),
-                            localCurrency
-                          )}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Monthly: ≈{" "}
-                          {formatCurrency(
-                            getMonthlyAmount(
-                              taxResult.totalTax *
-                                getExchangeRate(
-                                  selectedCountryCurrency,
-                                  localCurrency
-                                )
-                            ),
-                            localCurrency
-                          )}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      Effective Tax Rate
-                    </p>
-                    <p className="text-2xl font-bold">
-                      {(taxResult.effectiveRate * 100).toFixed(2)}%
-                    </p>
-                  </div>
-                </div>
-
-                {/* Add new section for After-Tax Income */}
-                <div className="grid grid-cols-2 gap-4 mt-4 p-4 bg-secondary rounded-lg">
+                <div className="grid grid-cols-2 gap-4 p-4 bg-secondary rounded-lg">
                   <div>
                     <p className="text-sm text-muted-foreground">
                       After-Tax Income ({selectedCountryCurrency})
