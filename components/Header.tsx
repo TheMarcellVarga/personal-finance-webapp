@@ -18,6 +18,14 @@ export function Header({ isDarkMode, toggleDarkMode }: HeaderProps) {
           <Link href="/">
             <h2 className="text-2xl font-bold">FinAdventurer</h2>
           </Link>
+          <nav className="hidden md:flex items-center space-x-4">
+            <Link href="/calculator" className="text-sm text-muted-foreground hover:text-foreground">
+              Calculator
+            </Link>
+            <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground">
+              Pricing
+            </Link>
+          </nav>
         </div>
 
         <div className="flex items-center space-x-4">

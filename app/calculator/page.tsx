@@ -33,23 +33,16 @@ export default function CalculatorPage() {
 
       <main className="flex-1 py-6">
         <div className="container mx-auto px-6 space-y-6">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight">
-              Personal Finance Assistant
-            </h1>
-            <p className="text-lg text-muted-foreground mt-2">
-              Calculate your taxes and explore financial information worldwide
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="h-full">
+          <div className="grid grid-cols-12 gap-6">
+            <div className="col-span-4">
+              {/* Takes 4 columns (1/3) */}
               <TaxCalculator
                 onCountrySelect={handleCountrySelect}
                 selectedCountry={selectedCountry}
               />
             </div>
-            <div className="h-full">
+            <div className="col-span-8">
+              {/* Takes 8 columns (2/3) */}
               <WorldMap
                 isDarkMode={isDarkMode}
                 selectedCountry={selectedCountry}
