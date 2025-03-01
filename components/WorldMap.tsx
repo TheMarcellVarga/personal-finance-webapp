@@ -22,6 +22,12 @@ export default function WorldMap({
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const countries = useCountries();
+  const [globeReady, setGlobeReady] = useState(false);
+  const [isGlobeInitialized, setIsGlobeInitialized] = useState(false);
+
+  // Use local image files instead of CDN URLs
+  const darkGlobeUrl = "/img/earth-night.jpg";
+  const lightGlobeUrl = "//unpkg.com/three-globe/example/img/earth-day.jpg";
 
   // Dynamically adjust globe size based on container
   useEffect(() => {
@@ -50,6 +56,33 @@ export default function WorldMap({
     }
   }, []);
 
+  // Initialize the globe once it's ready
+  useEffect(() => {
+    if (globeRef.current && globeReady && !isGlobeInitialized) {
+      const controls = globeRef.current.controls();
+      controls.enableZoom = true;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.5;
+      controls.update();
+      
+      // Set globe material properties to improve rendering quality
+      if (globeRef.current.globeMaterial) {
+        const material = globeRef.current.globeMaterial();
+        material.bumpScale = 0.01;
+        material.shininess = 5;
+        
+        // Force a re-render to apply changes
+        setTimeout(() => {
+          if (globeRef.current) {
+            globeRef.current.pointOfView({ lat: 0, lng: 0, altitude: 2.5 });
+          }
+        }, 200);
+      }
+      
+      setIsGlobeInitialized(true);
+    }
+  }, [globeReady, isGlobeInitialized]);
+
   useEffect(() => {
     if (selectedCountry && globeRef.current && countries.length > 0) {
       const controls = globeRef.current.controls();
@@ -75,7 +108,7 @@ export default function WorldMap({
           );
         }, 100);
       }
-    } else if (!selectedCountry && globeRef.current) {
+    } else if (!selectedCountry && globeRef.current && isGlobeInitialized) {
       const controls = globeRef.current.controls();
       controls.autoRotate = true;
       controls.autoRotateSpeed = 0.5;
@@ -85,43 +118,50 @@ export default function WorldMap({
         altitude: 2.5,
       });
     }
-  }, [selectedCountry, countries]);
+  }, [selectedCountry, countries, globeReady, isGlobeInitialized]);
 
   return (
-    <div ref={containerRef} className="h-full w-full">
+    <div ref={containerRef} className="h-full w-full relative">
       <Globe
         ref={globeRef}
         width={dimensions.width}
         height={dimensions.height}
-        globeImageUrl={
-          isDarkMode ? 
-            "https://unpkg.com/three-globe@2.24.4/example/img/earth-night.jpg" : 
-            "https://unpkg.com/three-globe@2.24.4/example/img/earth-blue-marble.jpg"
-        }
+        globeImageUrl={isDarkMode ? darkGlobeUrl : lightGlobeUrl}
+        backgroundImageUrl={null}
         backgroundColor={isDarkMode ? "rgba(10,10,25,1)" : "rgba(240,240,245,1)"}
-        atmosphereColor={isDarkMode ? "rgba(70,70,120,0.8)" : "rgba(180,180,255,0.3)"}
-        atmosphereAltitude={0.1}
+        atmosphereColor={isDarkMode ? "rgba(70,70,120,0.7)" : "rgba(180,180,255,0.2)"}
+        atmosphereAltitude={0.15}
         polygonsData={countries}
+        onGlobeReady={() => setGlobeReady(true)}
         polygonCapColor={(d) => {
           const country = d as CountryFeature;
           const countryCode = country.properties.ISO_A2;
           
           if (countryCode === selectedCountry) {
-            return "rgba(255, 100, 100, 0.8)";
+            return "rgba(255, 100, 100, 0.7)";
           }
           
           const taxData = getCountryTaxData(countryCode);
           return isDarkMode 
-            ? `${getTaxBandColor(taxData.taxBand, true)}80` // 50% opacity
-            : `${getTaxBandColor(taxData.taxBand, false)}80`; // 50% opacity
+            ? `${getTaxBandColor(taxData.taxBand, true)}60` // 37.5% opacity
+            : `${getTaxBandColor(taxData.taxBand, false)}60`; // 37.5% opacity
         }}
         polygonSideColor={() => "rgba(0, 0, 0, 0)"}
-        polygonStrokeColor={() => isDarkMode ? "#aaa" : "#666"}
-        polygonAltitude={0.003}
+        polygonStrokeColor={() => "rgba(0, 0, 0, 0)"} // Make borders invisible to prevent glitching
+        polygonAltitude={0.004} // Slightly higher altitude to avoid z-fighting
+        polygonsTransitionDuration={300}
+        showAtmosphere={true}
+        hexPolygonsData={[]} // Disable hex polygons to prevent layer conflicts
+        waitForGlobeReady={true} // Wait for textures to load before rendering
         polygonLabel={(d) => {
           const country = d as CountryFeature;
           const countryName = country.properties.ADMIN;
           const countryCode = country.properties.ISO_A2;
+          
+          // Skip invalid countries
+          if (!countryCode || countryCode === "-" || countryCode === "-99") {
+            return '';
+          }
           
           const taxData = getCountryTaxData(countryCode);
           const taxBandColor = getTaxBandColor(taxData.taxBand, isDarkMode);
@@ -205,7 +245,6 @@ export default function WorldMap({
             onCountryClick(country.properties.ISO_A2);
           }
         }}
-        polygonsTransitionDuration={300}
       />
     </div>
   );
