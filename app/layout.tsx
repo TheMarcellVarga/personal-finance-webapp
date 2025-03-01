@@ -18,10 +18,10 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body className={inter.className}>
+      <html lang="en" suppressHydrationWarning className="h-full">
+        <body className={`${inter.className} h-full`}>
           <AuthProvider>
-            <main className="min-h-screen bg-background">{children}</main>
+            {children}
           </AuthProvider>
         </body>
       </html>

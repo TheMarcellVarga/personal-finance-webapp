@@ -21,6 +21,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import { useCountries } from "@/hooks/useCountries";
 import {
@@ -28,9 +29,20 @@ import {
   currencyGroups,
   getCountryCurrency,
 } from "@/utils/currencyMappings";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { BarChart4, ArrowDownUp, PiggyBank, BadgePercent, ChevronRight } from "lucide-react";
+
 interface TaxCalculatorProps {
   onCountrySelect: (country: string) => void;
   selectedCountry: string;
+  useModals?: boolean;
 }
 
 const formatCurrency = (amount: number, currency: string) => {
@@ -65,6 +77,7 @@ const CurrencyDisplay = ({ code }: { code: string }) => {
 export default function TaxCalculator({
   onCountrySelect,
   selectedCountry,
+  useModals = false,
 }: TaxCalculatorProps) {
   const [income, setIncome] = useState<string>("");
   const [localCurrency, setLocalCurrency] = useState<string>("USD");
@@ -83,6 +96,8 @@ export default function TaxCalculator({
     }>;
     socialSecurity?: number;
   } | null>(null);
+  const [isBreakdownOpen, setIsBreakdownOpen] = useState(false);
+  const [isResultsOpen, setIsResultsOpen] = useState(false);
 
   const selectedCountryCurrency = useMemo(() => {
     const country = countries.find(
@@ -99,12 +114,321 @@ export default function TaxCalculator({
 
     const result = calculateTax(annualIncome, selectedCountry);
     setTaxResult(result);
+    
+    if (useModals) {
+      setIsResultsOpen(true);
+    }
   };
 
   const handleCountryChange = (value: string) => {
     onCountrySelect(value);
   };
 
+  const afterTaxIncome = taxResult 
+    ? Number(income) * (incomePeriod === "monthly" ? 12 : 1) - taxResult.totalTax 
+    : 0;
+
+  if (useModals) {
+    return (
+      <div className="h-full flex flex-col overflow-hidden">
+        <Card className="flex-1 border border-primary/10">
+          <CardHeader>
+            <CardTitle className="text-gradient">Income Tax Calculator</CardTitle>
+            <CardDescription>
+              Calculate your income tax based on your country's tax brackets
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="country">Country</Label>
+              <Select
+                value={selectedCountry}
+                onValueChange={handleCountryChange}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a country" />
+                </SelectTrigger>
+                <SelectContent>
+                  {countries
+                    .filter(
+                      (country, index, self) =>
+                        country.properties.ISO_A2 !== "-" &&
+                        country.properties.ISO_A2 !== "-99" &&
+                        index ===
+                          self.findIndex(
+                            (c) =>
+                              c.properties.ISO_A2 === country.properties.ISO_A2
+                          )
+                    )
+                    .sort((a, b) =>
+                      a.properties.ADMIN.localeCompare(b.properties.ADMIN)
+                    )
+                    .map((country) => (
+                      <SelectItem
+                        key={country.properties.ISO_A2}
+                        value={country.properties.ISO_A2}
+                      >
+                        {country.properties.ADMIN}
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="income">Income</Label>
+                <div className="flex items-center space-x-2 text-sm">
+                  <Button
+                    variant={incomePeriod === "monthly" ? "secondary" : "ghost"}
+                    size="sm"
+                    onClick={() => setIncomePeriod("monthly")}
+                    className="h-7"
+                  >
+                    Monthly
+                  </Button>
+                  <Button
+                    variant={incomePeriod === "annual" ? "secondary" : "ghost"}
+                    size="sm"
+                    onClick={() => setIncomePeriod("annual")}
+                    className="h-7"
+                  >
+                    Annual
+                  </Button>
+                </div>
+              </div>
+              <div className="flex space-x-2">
+                <div className="flex-1">
+                  <Input
+                    id="income"
+                    type="number"
+                    value={income}
+                    onChange={(e) => setIncome(e.target.value)}
+                    placeholder={`Enter ${incomePeriod} amount`}
+                    className="w-full"
+                  />
+                </div>
+                <Select value={localCurrency} onValueChange={setLocalCurrency}>
+                  <SelectTrigger className="w-[120px]">
+                    <SelectValue>
+                      {localCurrency && (
+                        <CurrencyDisplay code={localCurrency} />
+                      )}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(currencyGroups).map(
+                      ([group, currencies]: [string, string[]]) => (
+                        <SelectGroup key={group}>
+                          <SelectLabel className="capitalize">
+                            {group.replace(/([A-Z])/g, " $1").trim()}
+                          </SelectLabel>
+                          {currencies.map((code: string) => {
+                            const currency = availableCurrencies.find(
+                              (c) => c.value === code
+                            );
+                            return currency ? (
+                              <SelectItem key={code} value={code}>
+                                {currency.label}
+                              </SelectItem>
+                            ) : null;
+                          })}
+                          <SelectSeparator />
+                        </SelectGroup>
+                      )
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <Button 
+              onClick={handleCalculate} 
+              className="w-full bg-gradient-to-r from-primary to-primary/80 button-hover"
+              disabled={!income || !selectedCountry}
+            >
+              Calculate Tax
+            </Button>
+          </CardContent>
+          
+          {taxResult && (
+            <CardFooter className="flex flex-col space-y-4 pt-2 pb-6 px-6">
+              <div className="w-full bg-secondary/30 rounded-lg p-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Tax</p>
+                    <p className="text-xl font-bold">
+                      {formatCurrency(taxResult.totalTax, selectedCountryCurrency)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {(taxResult.effectiveRate * 100).toFixed(2)}% effective rate
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">After Tax</p>
+                    <p className="text-xl font-bold text-green-600 dark:text-green-400">
+                      {formatCurrency(afterTaxIncome, selectedCountryCurrency)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatCurrency(afterTaxIncome / 12, selectedCountryCurrency)} monthly
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="w-full">
+                <Dialog open={isBreakdownOpen} onOpenChange={setIsBreakdownOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="w-full flex justify-between">
+                      <span>View Tax Breakdown</span>
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Tax Breakdown</DialogTitle>
+                      <DialogDescription>
+                        Detailed breakdown of your tax calculation
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      {taxResult.breakdown.map((bracket, index) => (
+                        <div
+                          key={index}
+                          className="flex justify-between items-center p-2 bg-muted rounded"
+                        >
+                          <span>
+                            {bracket.bracket} ({(bracket.rate * 100).toFixed(0)}%)
+                          </span>
+                          <div className="text-right">
+                            <span className="font-medium">
+                              {formatCurrency(bracket.tax, selectedCountryCurrency)}
+                            </span>
+                            {localCurrency !== selectedCountryCurrency && (
+                              <div className="text-sm text-muted-foreground">
+                                ≈{" "}
+                                {formatCurrency(
+                                  bracket.tax *
+                                    getExchangeRate(
+                                      selectedCountryCurrency,
+                                      localCurrency
+                                    ),
+                                  localCurrency
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {taxResult.socialSecurity && (
+                        <div className="p-2 bg-muted rounded">
+                          <div className="flex justify-between">
+                            <span>Social Security</span>
+                            <span className="font-medium">
+                              {formatCurrency(
+                                taxResult.socialSecurity,
+                                selectedCountryCurrency
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </CardFooter>
+          )}
+        </Card>
+        
+        {/* Results Modal */}
+        <Dialog open={isResultsOpen} onOpenChange={setIsResultsOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Tax Calculation Results</DialogTitle>
+              <DialogDescription>
+                Your tax calculation for {countries.find(c => c.properties.ISO_A2 === selectedCountry)?.properties.ADMIN || selectedCountry}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              <div className="grid grid-cols-2 gap-6 mb-6">
+                <div className="flex flex-col items-center justify-center p-4 bg-secondary/30 rounded-lg">
+                  <BadgePercent className="mb-2 text-primary h-8 w-8" />
+                  <p className="text-sm text-muted-foreground mb-1">Tax Rate</p>
+                  <p className="text-2xl font-bold">{(taxResult?.effectiveRate || 0) * 100}%</p>
+                </div>
+                <div className="flex flex-col items-center justify-center p-4 bg-secondary/30 rounded-lg">
+                  <PiggyBank className="mb-2 text-primary h-8 w-8" />
+                  <p className="text-sm text-muted-foreground mb-1">Keep</p>
+                  <p className="text-2xl font-bold">{(1 - (taxResult?.effectiveRate || 0)) * 100}%</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
+                  <div className="flex items-center">
+                    <ArrowDownUp className="mr-3 text-primary h-5 w-5" />
+                    <div>
+                      <p className="font-medium">Total Income</p>
+                      <p className="text-sm text-muted-foreground">
+                        {incomePeriod === 'monthly' ? 'Monthly × 12' : 'Annual'}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="font-bold">
+                    {formatCurrency(Number(income) * (incomePeriod === 'monthly' ? 12 : 1), selectedCountryCurrency)}
+                  </p>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
+                  <div className="flex items-center">
+                    <BarChart4 className="mr-3 text-red-500 h-5 w-5" />
+                    <div>
+                      <p className="font-medium">Total Tax</p>
+                      <p className="text-sm text-muted-foreground">
+                        {(taxResult?.effectiveRate || 0) * 100}% effective rate
+                      </p>
+                    </div>
+                  </div>
+                  <p className="font-bold text-red-500">
+                    {formatCurrency(taxResult?.totalTax || 0, selectedCountryCurrency)}
+                  </p>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-muted rounded-lg">
+                  <div className="flex items-center">
+                    <PiggyBank className="mr-3 text-green-500 h-5 w-5" />
+                    <div>
+                      <p className="font-medium">After-Tax Income</p>
+                      <p className="text-sm text-muted-foreground">
+                        What you take home
+                      </p>
+                    </div>
+                  </div>
+                  <p className="font-bold text-green-600 dark:text-green-400">
+                    {formatCurrency(afterTaxIncome, selectedCountryCurrency)}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="mt-6">
+                <Button 
+                  onClick={() => {
+                    setIsResultsOpen(false);
+                    setIsBreakdownOpen(true);
+                  }}
+                  variant="outline"
+                  className="w-full"
+                >
+                  View Detailed Breakdown
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
+
+  // Original implementation for non-modal version
   return (
     <div className="h-full">
       <div className="space-y-6 h-full flex flex-col">
