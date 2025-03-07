@@ -10,14 +10,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 
 interface HeaderProps {
   isDarkMode: boolean;
   toggleDarkMode: () => void;
+  pageTitle?: string;
+  actionButton?: ReactNode;
 }
 
-export function Header({ isDarkMode, toggleDarkMode }: HeaderProps) {
+export function Header({ isDarkMode, toggleDarkMode, pageTitle, actionButton }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -44,9 +46,22 @@ export function Header({ isDarkMode, toggleDarkMode }: HeaderProps) {
               Pricing
             </Link>
           </nav>
+          
+          {pageTitle && (
+            <div className="ml-6 pl-6 border-l border-primary/10 hidden md:block">
+              <h1 className="text-xl font-semibold">{pageTitle}</h1>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center space-x-4">
+          {/* Page-specific action button */}
+          {actionButton && (
+            <div className="mr-2">
+              {actionButton}
+            </div>
+          )}
+          
           {/* Theme toggle */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -82,6 +97,11 @@ export function Header({ isDarkMode, toggleDarkMode }: HeaderProps) {
             {isMobileMenuOpen && (
               <div className="absolute top-16 right-0 w-full bg-background border-b border-primary/10 p-4 shadow-lg">
                 <nav className="flex flex-col space-y-3">
+                  {pageTitle && (
+                    <div className="py-2 px-4 font-semibold border-b border-primary/10 mb-2">
+                      {pageTitle}
+                    </div>
+                  )}
                   <Link 
                     href="/calculator" 
                     className="text-sm text-muted-foreground hover:text-foreground py-2 px-4 hover:bg-primary/5 rounded-md transition-colors"

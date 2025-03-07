@@ -40,13 +40,11 @@ export default function CalculatorPage() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden">
-      <Header isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
-
-      <main className="flex-1 flex flex-col overflow-hidden">
-        {/* App header with help button */}
-        <div className="border-b border-primary/10 bg-background px-6 py-2 flex items-center justify-between">
-          <h1 className="text-xl font-semibold">Tax Calculator</h1>
-          
+      <Header 
+        isDarkMode={isDarkMode} 
+        toggleDarkMode={toggleDarkMode} 
+        pageTitle="Tax Calculator"
+        actionButton={
           <Dialog open={isHelpOpen} onOpenChange={setIsHelpOpen}>
             <DialogTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full">
@@ -82,8 +80,10 @@ export default function CalculatorPage() {
               </div>
             </DialogContent>
           </Dialog>
-        </div>
+        }
+      />
 
+      <main className="flex-1 flex flex-col overflow-hidden">
         <div className="flex-1 overflow-hidden p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
             <TaxCalculator
