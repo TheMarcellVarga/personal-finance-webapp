@@ -138,7 +138,9 @@ export default function WorldMap({
           const countryCode = country.properties.ISO_A2;
           
           if (countryCode === selectedCountry) {
-            return "rgba(255, 100, 100, 0.7)";
+            return isDarkMode 
+              ? "rgba(255, 165, 0, 0.8)" // Bright orange for selected country in dark mode
+              : "rgba(255, 140, 0, 0.8)"; // Slightly darker orange for light mode
           }
           
           const taxData = getCountryTaxData(countryCode);
@@ -146,9 +148,40 @@ export default function WorldMap({
             ? `${getTaxBandColor(taxData.taxBand, true)}60` // 37.5% opacity
             : `${getTaxBandColor(taxData.taxBand, false)}60`; // 37.5% opacity
         }}
-        polygonSideColor={() => "rgba(0, 0, 0, 0)"}
-        polygonStrokeColor={() => "rgba(0, 0, 0, 0)"} // Make borders invisible to prevent glitching
-        polygonAltitude={0.004} // Slightly higher altitude to avoid z-fighting
+        polygonSideColor={(d) => {
+          const country = d as CountryFeature;
+          const countryCode = country.properties.ISO_A2;
+          
+          if (countryCode === selectedCountry) {
+            return isDarkMode 
+              ? "rgba(255, 165, 0, 0.5)" // Side color for selected country
+              : "rgba(255, 140, 0, 0.5)";
+          }
+          
+          return "rgba(0, 0, 0, 0)"; // Transparent for non-selected
+        }}
+        polygonStrokeColor={(d) => {
+          const country = d as CountryFeature;
+          const countryCode = country.properties.ISO_A2;
+          
+          if (countryCode === selectedCountry) {
+            return isDarkMode 
+              ? "rgba(255, 255, 255, 0.8)" // White stroke in dark mode
+              : "rgba(0, 0, 0, 0.5)"; // Dark stroke in light mode
+          }
+          
+          return "rgba(0, 0, 0, 0)"; // Make borders invisible to prevent glitching
+        }}
+        polygonAltitude={(d) => {
+          const country = d as CountryFeature;
+          const countryCode = country.properties.ISO_A2;
+          
+          if (countryCode === selectedCountry) {
+            return 0.012; // Higher altitude for the selected country
+          }
+          
+          return 0.004; // Normal altitude for other countries
+        }}
         polygonsTransitionDuration={300}
         showAtmosphere={true}
         hexPolygonsData={[]} // Disable hex polygons to prevent layer conflicts
