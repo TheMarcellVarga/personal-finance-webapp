@@ -5,7 +5,17 @@ import Globe from "react-globe.gl";
 import { Feature, Geometry } from "geojson";
 import bbox from "@turf/bbox";
 import { CountryFeature, useCountries } from "@/hooks/useCountries";
-import { getCountryTaxData, getTaxBandColor } from "@/utils/countryTaxData";
+import { getCountryTaxData, getTaxBandColor, getAllCountryTaxData, CountryTaxData, TaxBand } from "@/utils/countryTaxData";
+import { MICROSTATE_COORDS, TAX_HAVEN_CODES } from "@/data/tax-brackets/microstateCoordinates";
+
+// Define microstates with their coordinates, pulling from existing tax data
+// These are small countries that might be hard to see/select on the map
+interface MicrostateData {
+  name: string;
+  code: string;
+  lat: number;
+  lng: number;
+}
 
 interface WorldMapProps {
   isDarkMode: boolean;
@@ -24,10 +34,48 @@ export default function WorldMap({
   const countries = useCountries();
   const [globeReady, setGlobeReady] = useState(false);
   const [isGlobeInitialized, setIsGlobeInitialized] = useState(false);
-
+  
+  // Prepare microstate marker data
+  const [microstateMarkers, setMicrostateMarkers] = useState<MicrostateData[]>([]);
+  const [showMicrostatesPanel, setShowMicrostatesPanel] = useState(false);
+  
   // Use local image files instead of CDN URLs
   const darkGlobeUrl = "/img/earth-night.jpg";
   const lightGlobeUrl = "//unpkg.com/three-globe/example/img/earth-day.jpg";
+
+  // Prepare microstate data from tax data
+  useEffect(() => {
+    if (countries.length > 0) {
+      const allTaxData = getAllCountryTaxData();
+      const markers: MicrostateData[] = [];
+      
+      // Create markers for all tax havens and microstates with coordinates
+      TAX_HAVEN_CODES.forEach(code => {
+        if (MICROSTATE_COORDS[code]) {
+          const countryFeature = countries.find(c => c.properties.ISO_A2 === code);
+          const [lat, lng] = MICROSTATE_COORDS[code];
+          const taxData = getCountryTaxData(code);
+          
+          // Use actual country name from GeoJSON if available, or add context from tax data
+          let name = code;
+          if (countryFeature) {
+            name = countryFeature.properties.ADMIN;
+          } else if (taxData.notes) {
+            name = `${code} (${taxData.notes})`;
+          }
+            
+          markers.push({
+            name,
+            code,
+            lat,
+            lng
+          });
+        }
+      });
+      
+      setMicrostateMarkers(markers);
+    }
+  }, [countries]);
 
   // Dynamically adjust globe size based on container
   useEffect(() => {
@@ -301,7 +349,187 @@ export default function WorldMap({
             onCountryClick(country.properties.ISO_A2);
           }
         }}
+        
+        // Add microstate markers
+        pointsData={microstateMarkers}
+        pointLabel={d => {
+          const microstate = d as MicrostateData;
+          const taxData = getCountryTaxData(microstate.code);
+          const taxBandColor = getTaxBandColor(taxData.taxBand, isDarkMode);
+          
+          let specialNotes = '';
+          if (taxData.notes) {
+            specialNotes = `<div style="font-style: italic; font-size: 12px; margin-top: 4px;">${taxData.notes}</div>`;
+          } else if (taxData.hasFlatTax) {
+            specialNotes = '<div style="font-style: italic; font-size: 12px; margin-top: 4px;">Flat tax system</div>';
+          }
+          
+          return `
+            <div style="
+              background-color: ${isDarkMode ? 'rgba(30, 30, 45, 0.95)' : 'rgba(255, 255, 255, 0.95)'}; 
+              color: ${isDarkMode ? 'white' : '#333344'}; 
+              border-radius: 6px;
+              padding: 14px;
+              font-family: system-ui, -apple-system, sans-serif;
+              box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+              min-width: 200px;
+            ">
+              <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 10px;
+                border-bottom: 1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'};
+                padding-bottom: 8px;
+              ">
+                <div style="font-weight: bold; font-size: 18px;">${microstate.name}</div>
+                <div style="
+                  font-size: 12px;
+                  padding: 3px 8px;
+                  border-radius: 12px;
+                  background-color: ${taxBandColor};
+                  color: white;
+                  font-weight: 500;
+                ">${taxData.taxBand.replace('-', ' ').toUpperCase()}</div>
+              </div>
+              
+              <div style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 8px;
+              ">
+                <div style="font-size: 14px; color: ${isDarkMode ? '#a0a0b8' : '#666680'};">
+                  Maximum Tax Rate:
+                </div>
+                <div style="
+                  font-size: 18px; 
+                  font-weight: bold;
+                  color: ${taxBandColor};
+                ">${taxData.maxRate}%</div>
+              </div>
+              
+              <div style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: ${specialNotes ? '6px' : '0'};
+              ">
+                <div style="font-size: 14px; color: ${isDarkMode ? '#a0a0b8' : '#666680'};">
+                  Country Code:
+                </div>
+                <div style="font-size: 14px; font-weight: 500;">
+                  ${microstate.code}
+                </div>
+              </div>
+              
+              ${specialNotes}
+              
+              <div style="font-style: italic; font-size: 12px; margin-top: 8px; color: ${isDarkMode ? '#a0a0b8' : '#666680'};">
+                🔍 Tax-advantageous jurisdiction
+              </div>
+            </div>
+          `;
+        }}
+        pointAltitude={0.02}
+        pointRadius={d => {
+          const microstate = d as MicrostateData;
+          return microstate.code === selectedCountry ? 0.6 : 0.4;
+        }}
+        pointColor={d => {
+          const microstate = d as MicrostateData;
+          const taxData = getCountryTaxData(microstate.code);
+          
+          if (microstate.code === selectedCountry) {
+            return isDarkMode 
+              ? "rgba(255, 165, 0, 1)" // Bright orange for selected country in dark mode
+              : "rgba(255, 140, 0, 1)"; // Slightly darker orange for light mode
+          }
+          
+          return isDarkMode 
+            ? `${getTaxBandColor(taxData.taxBand, true)}` 
+            : `${getTaxBandColor(taxData.taxBand, false)}`;
+        }}
+        pointsMerge={false}
+        pointResolution={32}
+        onPointClick={point => {
+          const microstate = point as MicrostateData;
+          onCountryClick(microstate.code);
+        }}
       />
+      
+      {/* Tax Haven Button */}
+      <button 
+        className="absolute top-3 right-3 bg-background/80 backdrop-blur-sm p-2 rounded-lg border border-primary/10 text-xs shadow-lg flex items-center gap-1.5 hover:bg-primary/10 transition-all"
+        onClick={() => setShowMicrostatesPanel(!showMicrostatesPanel)}
+      >
+        <span className="text-xs font-medium">🏝️ Tax Havens</span>
+        <span className={`transition-transform duration-200 ${showMicrostatesPanel ? 'rotate-180' : ''}`}>
+          ▼
+        </span>
+      </button>
+      
+      {/* Tax Haven Panel */}
+      {showMicrostatesPanel && (
+        <div className="absolute top-12 right-3 bg-background/95 backdrop-blur-sm p-3 rounded-lg border border-primary/20 shadow-lg max-h-[60vh] overflow-y-auto w-[260px] z-10">
+          <div className="mb-2 pb-1 border-b border-primary/10">
+            <h3 className="font-medium text-sm">Tax-Advantageous Jurisdictions</h3>
+            <p className="text-xs text-muted-foreground mt-1">Small states with favorable tax policies</p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-1.5">
+            {microstateMarkers.map(ms => {
+              const taxData = getCountryTaxData(ms.code);
+              return (
+                <button 
+                  key={ms.code}
+                  onClick={() => onCountryClick(ms.code)}
+                  className={`p-2 rounded text-xs flex flex-col items-start transition-all ${
+                    selectedCountry === ms.code 
+                      ? 'bg-orange-500/20 border border-orange-500/40'
+                      : 'hover:bg-primary/5 border border-transparent'
+                  }`}
+                >
+                  <span className={`font-medium ${selectedCountry === ms.code ? 'text-orange-500' : ''}`}>
+                    {ms.name}
+                  </span>
+                  <div className="flex items-center justify-between w-full mt-0.5">
+                    <span className="text-[10px] text-muted-foreground">{ms.code}</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full" 
+                      style={{
+                        backgroundColor: getTaxBandColor(taxData.taxBand, isDarkMode),
+                        color: 'white'
+                      }}
+                    >
+                      {taxData.maxRate}%
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          
+          <div className="mt-3 pt-2 border-t border-primary/10">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-muted-foreground">Tax Band Colors:</span>
+            </div>
+            <div className="flex flex-wrap gap-1 mt-1.5">
+              {['no-tax', 'very-low', 'low', 'medium', 'high', 'very-high'].map(band => (
+                <div 
+                  key={band}
+                  className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px]"
+                  style={{
+                    backgroundColor: getTaxBandColor(band as any, isDarkMode),
+                    color: 'white'
+                  }}
+                >
+                  {band.replace('-', ' ')}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
