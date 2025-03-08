@@ -176,11 +176,34 @@ export default function WorldMap({
           const country = d as CountryFeature;
           const countryCode = country.properties.ISO_A2;
           
-          if (countryCode === selectedCountry) {
-            return 0.012; // Higher altitude for the selected country
+          // Detect high latitude countries (near poles) for special handling
+          let isNearPole = false;
+          
+          try {
+            // Safely access coordinates with proper typing
+            if (country.geometry.type === 'Polygon' || country.geometry.type === 'MultiPolygon') {
+              const coordinates = country.geometry.coordinates;
+              isNearPole = coordinates.some((poly: any) => {
+                if (Array.isArray(poly[0][0])) {
+                  // MultiPolygon - check first point of first polygon
+                  return Math.abs(poly[0][0][1]) > 60; // Latitude > 60°N or < 60°S
+                } else {
+                  // Polygon - check first point
+                  return Math.abs(poly[0][1]) > 60; // Latitude > 60°N or < 60°S
+                }
+              });
+            }
+          } catch (e) {
+            // Fallback if coordinates can't be checked
+            isNearPole = false;
           }
           
-          return 0.004; // Normal altitude for other countries
+          // Apply different altitude based on pole proximity and selection
+          if (countryCode === selectedCountry) {
+            return isNearPole ? 0.018 : 0.015; // Higher altitude for selected country, even higher near poles
+          }
+          
+          return isNearPole ? 0.008 : 0.006; // Baseline altitude, increased for polar countries
         }}
         polygonsTransitionDuration={300}
         showAtmosphere={true}
