@@ -461,26 +461,35 @@ export default function WorldMap({
             </div>
           `;
         }}
-        pointAltitude={0.02}
-        pointRadius={d => {
-          const microstate = d as MicrostateData;
-          return microstate.code === selectedCountry ? 0.6 : 0.4;
-        }}
         pointColor={d => {
           const microstate = d as MicrostateData;
           const taxData = getCountryTaxData(microstate.code);
           
-          if (microstate.code === selectedCountry) {
-            return isDarkMode 
-              ? "rgba(255, 165, 0, 1)" // Bright orange for selected country in dark mode
-              : "rgba(255, 140, 0, 1)"; // Slightly darker orange for light mode
-          }
-          
+          // Always use the tax band color so selection doesn't distort tax perception
           return isDarkMode 
             ? `${getTaxBandColor(taxData.taxBand, true)}` 
             : `${getTaxBandColor(taxData.taxBand, false)}`;
         }}
+        pointAltitude={d => {
+          const microstate = d as MicrostateData;
+          // Make selected microstates stand out by being slightly higher
+          return microstate.code === selectedCountry ? 0.05 : 0.02;
+        }}
+        pointRadius={d => {
+          const microstate = d as MicrostateData;
+          // Make selected microstates have a larger radius
+          return microstate.code === selectedCountry ? 0.7 : 0.4;
+        }}
+        // Add a ring/halo around selected points
         pointsMerge={false}
+        ringsData={selectedCountry && MICROSTATE_COORDS[selectedCountry] ? 
+          [{ lat: MICROSTATE_COORDS[selectedCountry][0], lng: MICROSTATE_COORDS[selectedCountry][1] }] : 
+          []
+        }
+        ringColor={() => isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)'}
+        ringMaxRadius={0.8}
+        ringPropagationSpeed={3}
+        ringRepeatPeriod={2000}
         pointResolution={32}
         onPointClick={point => {
           const microstate = point as MicrostateData;
@@ -506,6 +515,10 @@ export default function WorldMap({
           <div className="mb-2 pb-1 border-b border-primary/10">
             <h3 className="font-medium text-sm">Tax-Advantageous Jurisdictions</h3>
             <p className="text-xs text-muted-foreground mt-1">Small states with favorable tax policies</p>
+            <p className="text-xs text-muted-foreground mt-1 italic">
+              <span className="inline-block w-2 h-2 border border-gray-400 rounded-sm mr-1"></span>
+              Selected states are indicated with a border and checkmark
+            </p>
           </div>
           
           <div className="grid grid-cols-2 gap-1.5">
@@ -523,15 +536,25 @@ export default function WorldMap({
                   onClick={() => onCountryClick(ms.code)}
                   className={`p-2 rounded text-xs flex flex-col items-start transition-all ${
                     selectedCountry === ms.code 
-                      ? 'bg-orange-500/20 border border-orange-500/40'
+                      // Use a border and checkmark instead of changing colors
+                      ? 'border-2 border-gray-700 dark:border-gray-300 relative'
                       : 'hover:bg-primary/5 border border-transparent'
                   }`}
                 >
-                  <span className={`font-medium ${selectedCountry === ms.code ? 'text-orange-500' : ''}`}>
+                  {/* Add a checkmark for selected states */}
+                  {selectedCountry === ms.code && (
+                    <div className="absolute -right-1 -top-1 bg-background rounded-full p-0.5 shadow-sm">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                  )}
+                  <span className="font-medium">
                     {ms.name}
                   </span>
                   <div className="flex items-center justify-between w-full mt-0.5">
                     <span className="text-[10px] text-muted-foreground">{ms.code}</span>
+                    {/* Tax rate badge always uses the color based on tax band */}
                     <span 
                       className="text-[10px] px-1.5 py-0.5 rounded-full text-white" 
                       style={{
