@@ -7,6 +7,7 @@ import bbox from "@turf/bbox";
 import { CountryFeature, useCountries } from "@/hooks/useCountries";
 import { getCountryTaxData, getTaxBandColor, getAllCountryTaxData, CountryTaxData, TaxBand } from "@/utils/countryTaxData";
 import { MICROSTATE_COORDS, TAX_HAVEN_CODES } from "@/data/tax-brackets/microstateCoordinates";
+import { completeEuropeanTaxData } from "@/store/taxStore";
 
 // Define microstates with their coordinates, pulling from existing tax data
 // These are small countries that might be hard to see/select on the map
@@ -56,12 +57,18 @@ export default function WorldMap({
           const [lat, lng] = MICROSTATE_COORDS[code];
           const taxData = getCountryTaxData(code);
           
-          // Use actual country name from GeoJSON if available, or add context from tax data
+          // Get the country name from GeoJSON or use a default name
           let name = code;
           if (countryFeature) {
             name = countryFeature.properties.ADMIN;
-          } else if (taxData.notes) {
-            name = `${code} (${taxData.notes})`;
+          } else {
+            // Lookup the name from tax store if not in GeoJSON
+            const taxCountry = completeEuropeanTaxData.find((c: { code: string }) => c.code === code);
+            if (taxCountry) {
+              name = taxCountry.name;
+            } else if (taxData.notes) {
+              name = `${code} (${taxData.notes})`;
+            }
           }
             
           markers.push({
@@ -136,6 +143,7 @@ export default function WorldMap({
       const controls = globeRef.current.controls();
       controls.autoRotate = false;
 
+      // First, check if it's a country in the GeoJSON data
       const countryFeature = countries.find(
         (feature) => feature.properties.ISO_A2 === selectedCountry
       );
@@ -155,6 +163,21 @@ export default function WorldMap({
             1250 // Increased duration for smoother transition
           );
         }, 100);
+      } 
+      // If not found in GeoJSON, check if it's a microstate/tax haven with coordinates
+      else if (MICROSTATE_COORDS[selectedCountry]) {
+        const [lat, lng] = MICROSTATE_COORDS[selectedCountry];
+        
+        setTimeout(() => {
+          globeRef.current.pointOfView(
+            {
+              lat,
+              lng,
+              altitude: 1.8, // Slightly higher altitude for small territories
+            },
+            1250
+          );
+        }, 100);
       }
     } else if (!selectedCountry && globeRef.current && isGlobeInitialized) {
       const controls = globeRef.current.controls();
@@ -167,6 +190,13 @@ export default function WorldMap({
       });
     }
   }, [selectedCountry, countries, globeReady, isGlobeInitialized]);
+
+  // Effect to auto-open the microstates panel when a microstate is selected
+  useEffect(() => {
+    if (selectedCountry && TAX_HAVEN_CODES.includes(selectedCountry)) {
+      setShowMicrostatesPanel(true);
+    }
+  }, [selectedCountry]);
 
   return (
     <div ref={containerRef} className="h-full w-full relative">
@@ -455,6 +485,7 @@ export default function WorldMap({
         onPointClick={point => {
           const microstate = point as MicrostateData;
           onCountryClick(microstate.code);
+          setShowMicrostatesPanel(true);
         }}
       />
       
@@ -478,8 +509,14 @@ export default function WorldMap({
           </div>
           
           <div className="grid grid-cols-2 gap-1.5">
-            {microstateMarkers.map(ms => {
+            {microstateMarkers.sort((a, b) => a.name.localeCompare(b.name)).map(ms => {
               const taxData = getCountryTaxData(ms.code);
+              const taxCountry = completeEuropeanTaxData.find((c: { code: string }) => c.code === ms.code);
+              const taxRate = taxCountry ? 
+                (taxCountry.brackets.length > 0 ? 
+                  (taxCountry.brackets[taxCountry.brackets.length - 1].rate * 100).toFixed(0) : "0") : 
+                (taxData.maxRate.toString());
+              
               return (
                 <button 
                   key={ms.code}
@@ -495,13 +532,13 @@ export default function WorldMap({
                   </span>
                   <div className="flex items-center justify-between w-full mt-0.5">
                     <span className="text-[10px] text-muted-foreground">{ms.code}</span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded-full" 
+                    <span 
+                      className="text-[10px] px-1.5 py-0.5 rounded-full text-white" 
                       style={{
-                        backgroundColor: getTaxBandColor(taxData.taxBand, isDarkMode),
-                        color: 'white'
+                        backgroundColor: getTaxBandColor(taxData.taxBand, isDarkMode)
                       }}
                     >
-                      {taxData.maxRate}%
+                      {taxRate}%
                     </span>
                   </div>
                 </button>

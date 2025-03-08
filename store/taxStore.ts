@@ -8,6 +8,7 @@ import { balticStatesTax } from '../data/tax-brackets/balticStatesTax';
 import { otherEuropeanTax } from '../data/tax-brackets/otherEuropeanTax';
 import { additionalEuropeanTax } from '../data/tax-brackets/additionalEuropeanTax';
 import { missingEuropeanTax } from '../data/tax-brackets/missingEuropeanTax';
+import { taxHavensTax } from '../data/tax-brackets/taxHavensTax';
 
 interface TaxBracket {
   min: number;
@@ -57,6 +58,7 @@ export const completeEuropeanTaxData = [
   ...otherEuropeanTax,
   ...additionalEuropeanTax,
   ...missingEuropeanTax,
+  ...taxHavensTax,
 ];
 
 export const useTaxStore = create<TaxStore>((set, get) => ({

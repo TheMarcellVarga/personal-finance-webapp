@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useTaxStore } from "@/store/taxStore";
+import { useTaxStore, completeEuropeanTaxData } from "@/store/taxStore";
 import {
   Select,
   SelectContent,
@@ -99,11 +99,51 @@ export default function TaxCalculator({
   const [isBreakdownOpen, setIsBreakdownOpen] = useState(false);
   const [isResultsOpen, setIsResultsOpen] = useState(false);
 
+  // Get country name from different sources, handling microstates/tax havens
+  const selectedCountryName = useMemo(() => {
+    // First try GeoJSON data (main countries)
+    const countryFromGeoJSON = countries.find(
+      (c) => c.properties.ISO_A2 === selectedCountry
+    );
+    
+    if (countryFromGeoJSON) {
+      return countryFromGeoJSON.properties.ADMIN;
+    }
+    
+    // If not found in GeoJSON, check tax data (for microstates/tax havens)
+    const countryFromTaxData = completeEuropeanTaxData.find(
+      (c) => c.code === selectedCountry
+    );
+    
+    if (countryFromTaxData) {
+      return countryFromTaxData.name;
+    }
+    
+    // Fallback
+    return selectedCountry;
+  }, [selectedCountry, countries]);
+
   const selectedCountryCurrency = useMemo(() => {
     const country = countries.find(
       (c) => c.properties.ISO_A2 === selectedCountry
     );
-    return getCountryCurrency(country?.properties.ISO_A2 ?? "US");
+    
+    // First try GeoJSON data
+    if (country?.properties.ISO_A2) {
+      return getCountryCurrency(country.properties.ISO_A2);
+    }
+    
+    // If not found in GeoJSON, check tax data (for microstates/tax havens)
+    const taxCountry = completeEuropeanTaxData.find(
+      (c) => c.code === selectedCountry
+    );
+    
+    if (taxCountry?.currency) {
+      return taxCountry.currency;
+    }
+    
+    // Fallback
+    return "USD";
   }, [selectedCountry, countries]);
 
   const handleCalculate = () => {
@@ -112,11 +152,15 @@ export default function TaxCalculator({
     const annualIncome =
       incomePeriod === "monthly" ? Number(income) * 12 : Number(income);
 
-    const result = calculateTax(annualIncome, selectedCountry);
-    setTaxResult(result);
-    
-    if (useModals) {
-      setIsResultsOpen(true);
+    try {
+      const result = calculateTax(annualIncome, selectedCountry);
+      setTaxResult(result);
+      
+      if (useModals) {
+        setIsResultsOpen(true);
+      }
+    } catch (error) {
+      console.error('Error calculating tax for country:', selectedCountry, error);
     }
   };
 
@@ -132,11 +176,16 @@ export default function TaxCalculator({
     return (
       <div className="h-full flex flex-col overflow-hidden">
         <Card className="flex-1 border border-primary/10">
-          <CardHeader>
-            <CardTitle className="text-gradient">Income Tax Calculator</CardTitle>
-            <CardDescription>
-              Calculate your income tax based on your country's tax brackets
-            </CardDescription>
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center justify-between">
+              <span>Income Tax Calculator</span>
+              {selectedCountry && (
+                <span className="text-base font-normal text-muted-foreground">
+                  {selectedCountryName}
+                </span>
+              )}
+            </CardTitle>
+            <CardDescription>Calculate income tax based on country rates</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
@@ -149,26 +198,37 @@ export default function TaxCalculator({
                   <SelectValue placeholder="Select a country" />
                 </SelectTrigger>
                 <SelectContent>
-                  {countries
-                    .filter(
-                      (country, index, self) =>
-                        country.properties.ISO_A2 !== "-" &&
-                        country.properties.ISO_A2 !== "-99" &&
-                        index ===
-                          self.findIndex(
-                            (c) =>
-                              c.properties.ISO_A2 === country.properties.ISO_A2
-                          )
+                  {/* Get all country codes from both GeoJSON and tax data */}
+                  {[
+                    ...countries
+                      .filter(
+                        (country) =>
+                          country.properties.ISO_A2 !== "-" &&
+                          country.properties.ISO_A2 !== "-99"
+                      )
+                      .map(country => ({
+                        code: country.properties.ISO_A2,
+                        name: country.properties.ADMIN,
+                        source: 'geojson'
+                      })),
+                    ...completeEuropeanTaxData.map(country => ({
+                      code: country.code,
+                      name: country.name,
+                      source: 'taxdata'
+                    }))
+                  ]
+                    // Filter out duplicates by code
+                    .filter((item, index, self) => 
+                      index === self.findIndex(t => t.code === item.code)
                     )
-                    .sort((a, b) =>
-                      a.properties.ADMIN.localeCompare(b.properties.ADMIN)
-                    )
+                    // Sort by name
+                    .sort((a, b) => a.name.localeCompare(b.name))
                     .map((country) => (
                       <SelectItem
-                        key={country.properties.ISO_A2}
-                        value={country.properties.ISO_A2}
+                        key={country.code}
+                        value={country.code}
                       >
-                        {country.properties.ADMIN}
+                        {country.name}
                       </SelectItem>
                     ))}
                 </SelectContent>
@@ -433,11 +493,16 @@ export default function TaxCalculator({
     <div className="h-full">
       <div className="space-y-6 h-full flex flex-col">
         <Card className="flex-1">
-          <CardHeader>
-            <CardTitle>Income Tax Calculator</CardTitle>
-            <CardDescription>
-              Calculate your income tax based on your country's tax brackets
-            </CardDescription>
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center justify-between">
+              <span>Income Tax Calculator</span>
+              {selectedCountry && (
+                <span className="text-base font-normal text-muted-foreground">
+                  {selectedCountryName}
+                </span>
+              )}
+            </CardTitle>
+            <CardDescription>Calculate income tax based on country rates</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -446,30 +511,41 @@ export default function TaxCalculator({
                 value={selectedCountry}
                 onValueChange={handleCountryChange}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a country" />
                 </SelectTrigger>
                 <SelectContent>
-                  {countries
-                    .filter(
-                      (country, index, self) =>
-                        country.properties.ISO_A2 !== "-" &&
-                        country.properties.ISO_A2 !== "-99" &&
-                        index ===
-                          self.findIndex(
-                            (c) =>
-                              c.properties.ISO_A2 === country.properties.ISO_A2
-                          )
+                  {/* Get all country codes from both GeoJSON and tax data */}
+                  {[
+                    ...countries
+                      .filter(
+                        (country) =>
+                          country.properties.ISO_A2 !== "-" &&
+                          country.properties.ISO_A2 !== "-99"
+                      )
+                      .map(country => ({
+                        code: country.properties.ISO_A2,
+                        name: country.properties.ADMIN,
+                        source: 'geojson'
+                      })),
+                    ...completeEuropeanTaxData.map(country => ({
+                      code: country.code,
+                      name: country.name,
+                      source: 'taxdata'
+                    }))
+                  ]
+                    // Filter out duplicates by code
+                    .filter((item, index, self) => 
+                      index === self.findIndex(t => t.code === item.code)
                     )
-                    .sort((a, b) =>
-                      a.properties.ADMIN.localeCompare(b.properties.ADMIN)
-                    )
+                    // Sort by name
+                    .sort((a, b) => a.name.localeCompare(b.name))
                     .map((country) => (
                       <SelectItem
-                        key={country.properties.ISO_A2}
-                        value={country.properties.ISO_A2}
+                        key={country.code}
+                        value={country.code}
                       >
-                        {country.properties.ADMIN}
+                        {country.name}
                       </SelectItem>
                     ))}
                 </SelectContent>
