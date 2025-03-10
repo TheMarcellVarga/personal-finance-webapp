@@ -61,6 +61,16 @@ npm run dev
 
 Visit [http://localhost:3000](http://localhost:3000) to view the application.
 
+## CI/CD Pipeline
+
+This project uses GitHub Actions for continuous integration and deployment:
+
+- **Automated Checks**: Every push and pull request to the main branches triggers linting and build checks
+- **Node.js**: The pipeline runs on the latest LTS version of Node.js
+- **Workflow File**: Located at `.github/workflows/ci.yml`
+
+To view the CI/CD status, check the Actions tab in the GitHub repository.
+
 ## Project Structure Highlights
 
 ```
