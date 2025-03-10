@@ -16,15 +16,17 @@ export async function POST(req: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-  } catch (error: any) {
-    return new NextResponse(`Webhook Error: ${error?.message || 'Unknown error'}`, { status: 400 });
+  } catch (error: Error | unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return new NextResponse(`Webhook Error: ${errorMessage}`, { status: 400 });
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
 
   if (event.type === 'checkout.session.completed') {
     // Handle successful payment
-    const subscription = await stripe.subscriptions.retrieve(
+    // Retrieve subscription but don't store in variable since it's unused
+    await stripe.subscriptions.retrieve(
       session.subscription as string
     );
 

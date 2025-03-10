@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Calculator, Globe, ArrowLeftRight, MapPin, Coins, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import dynamic from "next/dynamic";
 

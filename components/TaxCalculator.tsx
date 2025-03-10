@@ -639,7 +639,7 @@ export default function TaxCalculator({
               </div>
             ) : !taxResult ? (
               <div className="text-center py-8 text-muted-foreground">
-                <p>Click "Calculate Tax" to see your tax breakdown</p>
+                <p>Click &ldquo;Calculate Tax&rdquo; to see your tax breakdown</p>
               </div>
             ) : (
               <>

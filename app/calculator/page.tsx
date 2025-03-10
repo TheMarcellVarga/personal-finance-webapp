@@ -4,7 +4,6 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import TaxCalculator from "@/components/TaxCalculator";
 import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { InfoIcon } from "lucide-react";
 import {

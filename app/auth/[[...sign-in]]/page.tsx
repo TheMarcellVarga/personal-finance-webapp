@@ -26,9 +26,9 @@ export default function AuthPage() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              "This platform has revolutionized how I understand global tax
+              &ldquo;This platform has revolutionized how I understand global tax
               systems. The visualization makes complex information accessible
-              and clear."
+              and clear.&rdquo;
             </p>
             <footer className="text-sm">Sofia Davis</footer>
           </blockquote>
