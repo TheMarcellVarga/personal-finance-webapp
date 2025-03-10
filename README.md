@@ -67,9 +67,31 @@ This project uses GitHub Actions for continuous integration and deployment:
 
 - **Automated Checks**: Every push and pull request to the main branches triggers linting and build checks
 - **Node.js**: The pipeline runs on the latest LTS version of Node.js
-- **Workflow File**: Located at `.github/workflows/ci.yml`
+- **Workflow Files**: 
+  - `.github/workflows/ci.yml`: Runs tests and linting
+  - `.github/workflows/deploy.yml`: Deploys to Vercel
+  - `.github/workflows/kubernetes-deploy.yml`: Deploys to Kubernetes using Helm
 
 To view the CI/CD status, check the Actions tab in the GitHub repository.
+
+## Deployment Options
+
+### Vercel Deployment
+
+For deployment to Vercel, you'll need to:
+1. Generate a Vercel API token from your Vercel account settings
+2. Add this token as a repository secret named `VERCEL_TOKEN` in your GitHub repository settings
+
+### Kubernetes Deployment
+
+For deployment to Kubernetes, you'll need:
+1. A Kubernetes cluster
+2. The following secrets set in your GitHub repository:
+   - `KUBE_CONFIG`: Your Kubernetes config file (base64 encoded)
+   - `DOCKER_REGISTRY`: Your Docker registry URL
+   - `DOCKER_IMAGE_NAME`: Your Docker image name
+
+The Helm chart is located in the `helm/personal-finance-webapp` directory.
 
 ## Project Structure Highlights
 
