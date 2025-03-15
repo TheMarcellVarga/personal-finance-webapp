@@ -40,6 +40,12 @@ export function Header({ isDarkMode, toggleDarkMode, pageTitle, actionButton }: 
               Calculator
             </Link>
             <Link 
+              href="/financial-planning" 
+              className="text-sm text-muted-foreground hover:text-foreground animated-underline py-1"
+            >
+              Financial Planning
+            </Link>
+            <Link 
               href="/pricing" 
               className="text-sm text-muted-foreground hover:text-foreground animated-underline py-1"
             >
@@ -108,6 +114,13 @@ export function Header({ isDarkMode, toggleDarkMode, pageTitle, actionButton }: 
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Calculator
+                  </Link>
+                  <Link 
+                    href="/financial-planning" 
+                    className="text-sm text-muted-foreground hover:text-foreground py-2 px-4 hover:bg-primary/5 rounded-md transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Financial Planning
                   </Link>
                   <Link 
                     href="/pricing" 
