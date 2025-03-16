@@ -172,6 +172,104 @@ export default function TaxCalculator({
     ? Number(income) * (incomePeriod === "monthly" ? 12 : 1) - taxResult.totalTax 
     : 0;
 
+  // Add debugging before the SelectContent
+  console.log('Raw GeoJSON countries:', countries.map(c => ({ 
+    iso: c.properties.ISO_A2,
+    name: c.properties.ADMIN
+  })));
+  console.log('Raw European tax data:', completeEuropeanTaxData);
+
+  const getUniqueCountries = () => {
+    // First filter invalid entries from GeoJSON
+    const validGeoCountries = countries
+      .filter(country => {
+        // Log all countries with -99 code for debugging
+        if (country.properties?.ISO_A2 === "-99") {
+          console.log('Found -99 code in GeoJSON:', country.properties);
+        }
+        
+        const isValid = country.properties?.ISO_A2 &&
+          typeof country.properties.ISO_A2 === 'string' &&
+          country.properties.ISO_A2.length === 2 &&
+          country.properties.ISO_A2 !== "-" &&
+          country.properties.ISO_A2 !== "-99" &&
+          // Additional validation to ensure no invalid codes
+          /^[A-Z]{2}$/.test(country.properties.ISO_A2);
+        
+        if (!isValid && country.properties?.ADMIN) {
+          console.log('Filtered out GeoJSON country:', {
+            name: country.properties.ADMIN,
+            code: country.properties.ISO_A2,
+            reason: 'Invalid code format'
+          });
+        }
+        return isValid;
+      })
+      .map(country => ({
+        code: country.properties.ISO_A2,
+        name: country.properties.ADMIN,
+        source: 'geojson'
+      }));
+
+    // Filter invalid entries from tax data
+    const validTaxCountries = completeEuropeanTaxData
+      .filter(country => {
+        // Log all countries with -99 code for debugging
+        if (country.code === "-99") {
+          console.log('Found -99 code in tax data:', country);
+        }
+        
+        const isValid = country.code &&
+          typeof country.code === 'string' &&
+          country.code.length === 2 &&
+          country.code !== "-" &&
+          country.code !== "-99" &&
+          // Additional validation to ensure no invalid codes
+          /^[A-Z]{2}$/.test(country.code);
+        
+        if (!isValid && country.name) {
+          console.log('Filtered out tax country:', {
+            name: country.name,
+            code: country.code,
+            reason: 'Invalid code format'
+          });
+        }
+        return isValid;
+      })
+      .map(country => ({
+        code: country.code,
+        name: country.name,
+        source: 'taxdata'
+      }));
+
+    // Create a Map for unique entries
+    const uniqueMap = new Map();
+
+    // Add GeoJSON countries first
+    validGeoCountries.forEach(country => {
+      uniqueMap.set(country.code, country);
+    });
+
+    // Override with tax data where available
+    validTaxCountries.forEach(country => {
+      uniqueMap.set(country.code, country);
+    });
+
+    const finalCountries = Array.from(uniqueMap.values());
+    
+    // Final validation to ensure no -99 codes slipped through
+    const cleanCountries = finalCountries.filter(country => {
+      if (country.code === "-99") {
+        console.log('Found -99 code in final list:', country);
+        return false;
+      }
+      return true;
+    });
+    
+    console.log('Clean countries count:', cleanCountries.length);
+    return cleanCountries;
+  };
+
   if (useModals) {
     return (
       <div className="h-full flex flex-col overflow-hidden">
@@ -198,39 +296,43 @@ export default function TaxCalculator({
                   <SelectValue placeholder="Select a country" />
                 </SelectTrigger>
                 <SelectContent>
-                  {/* Get all country codes from both GeoJSON and tax data */}
-                  {[
-                    ...countries
-                      .filter(
-                        (country) =>
-                          country.properties.ISO_A2 !== "-" &&
-                          country.properties.ISO_A2 !== "-99"
-                      )
-                      .map(country => ({
-                        code: country.properties.ISO_A2,
-                        name: country.properties.ADMIN,
-                        source: 'geojson'
-                      })),
-                    ...completeEuropeanTaxData.map(country => ({
-                      code: country.code,
-                      name: country.name,
-                      source: 'taxdata'
-                    }))
-                  ]
-                    // Filter out duplicates by code
-                    .filter((item, index, self) => 
-                      index === self.findIndex(t => t.code === item.code)
-                    )
-                    // Sort by name
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((country) => (
-                      <SelectItem
-                        key={country.code}
-                        value={country.code}
-                      >
-                        {country.name}
-                      </SelectItem>
-                    ))}
+                  {(() => {
+                    // Get all valid countries first
+                    const validCountries = [...new Set([
+                      ...countries
+                        .filter(country => 
+                          country.properties?.ISO_A2 && 
+                          country.properties.ISO_A2.length === 2 && 
+                          /^[A-Z]{2}$/.test(country.properties.ISO_A2)
+                        )
+                        .map(country => ({
+                          code: country.properties.ISO_A2,
+                          name: country.properties.ADMIN
+                        })),
+                      ...completeEuropeanTaxData
+                        .filter(country => 
+                          country.code && 
+                          country.code.length === 2 && 
+                          /^[A-Z]{2}$/.test(country.code)
+                        )
+                        .map(country => ({
+                          code: country.code,
+                          name: country.name
+                        }))
+                    ].filter(country => country.code !== "-99" && country.code !== "-"))];
+
+                    // Sort and render only valid countries
+                    return validCountries
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map(country => (
+                        <SelectItem
+                          key={country.code}
+                          value={country.code}
+                        >
+                          {country.name}
+                        </SelectItem>
+                      ));
+                  })()}
                 </SelectContent>
               </Select>
             </div>
@@ -515,39 +617,43 @@ export default function TaxCalculator({
                   <SelectValue placeholder="Select a country" />
                 </SelectTrigger>
                 <SelectContent>
-                  {/* Get all country codes from both GeoJSON and tax data */}
-                  {[
-                    ...countries
-                      .filter(
-                        (country) =>
-                          country.properties.ISO_A2 !== "-" &&
-                          country.properties.ISO_A2 !== "-99"
-                      )
-                      .map(country => ({
-                        code: country.properties.ISO_A2,
-                        name: country.properties.ADMIN,
-                        source: 'geojson'
-                      })),
-                    ...completeEuropeanTaxData.map(country => ({
-                      code: country.code,
-                      name: country.name,
-                      source: 'taxdata'
-                    }))
-                  ]
-                    // Filter out duplicates by code
-                    .filter((item, index, self) => 
-                      index === self.findIndex(t => t.code === item.code)
-                    )
-                    // Sort by name
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((country) => (
-                      <SelectItem
-                        key={country.code}
-                        value={country.code}
-                      >
-                        {country.name}
-                      </SelectItem>
-                    ))}
+                  {(() => {
+                    // Get all valid countries first
+                    const validCountries = [...new Set([
+                      ...countries
+                        .filter(country => 
+                          country.properties?.ISO_A2 && 
+                          country.properties.ISO_A2.length === 2 && 
+                          /^[A-Z]{2}$/.test(country.properties.ISO_A2)
+                        )
+                        .map(country => ({
+                          code: country.properties.ISO_A2,
+                          name: country.properties.ADMIN
+                        })),
+                      ...completeEuropeanTaxData
+                        .filter(country => 
+                          country.code && 
+                          country.code.length === 2 && 
+                          /^[A-Z]{2}$/.test(country.code)
+                        )
+                        .map(country => ({
+                          code: country.code,
+                          name: country.name
+                        }))
+                    ].filter(country => country.code !== "-99" && country.code !== "-"))];
+
+                    // Sort and render only valid countries
+                    return validCountries
+                      .sort((a, b) => a.name.localeCompare(b.name))
+                      .map(country => (
+                        <SelectItem
+                          key={country.code}
+                          value={country.code}
+                        >
+                          {country.name}
+                        </SelectItem>
+                      ));
+                  })()}
                 </SelectContent>
               </Select>
             </div>
