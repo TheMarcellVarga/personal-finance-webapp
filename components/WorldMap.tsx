@@ -44,6 +44,8 @@ export default function WorldMap({
   const darkGlobeUrl = "/img/earth-night.jpg";
   const lightGlobeUrl = "//unpkg.com/three-globe/example/img/earth-day.jpg";
 
+  const defaultColor = isDarkMode ? "#1f2937" : "#e5e7eb";
+
   // Prepare microstate data from tax data
   useEffect(() => {
     if (countries.length > 0) {
@@ -198,6 +200,45 @@ export default function WorldMap({
     }
   }, [selectedCountry]);
 
+  const getCountryIsoCode = (country: Feature<Geometry, any> | null): string | null => {
+    if (!country) return null;
+    
+    const isoCode = country?.properties?.ISO_A2;
+    if (!isoCode || isoCode === "-") return null;
+
+    // We don't need special handling for "-99" codes anymore as they're
+    // fixed in the useCountries hook
+
+    return isoCode;
+  };
+
+  const getCountryColor = (country: Feature<Geometry, any> | null) => {
+    if (!country) return defaultColor;
+
+    const isoCode = getCountryIsoCode(country);
+    if (!isoCode) return defaultColor;
+
+    const taxData = getCountryTaxData(isoCode);
+    return getTaxBandColor(taxData.taxBand, isDarkMode);
+  };
+
+  const handleCountryClick = (country: Feature<Geometry, any> | null) => {
+    if (!country) return;
+    
+    const isoCode = getCountryIsoCode(country);
+    if (isoCode) {
+      onCountryClick(isoCode);
+    }
+  };
+
+  // Update the click handlers to handle undefined values
+  const handleMicrostateClick = (code: string) => {
+    const country = countries.find(c => c.properties.ISO_A2 === code);
+    if (country) {
+      handleCountryClick(country);
+    }
+  };
+
   return (
     <div ref={containerRef} className="h-full w-full relative">
       <Globe
@@ -252,7 +293,7 @@ export default function WorldMap({
         }}
         polygonAltitude={(d) => {
           const country = d as CountryFeature;
-          const countryCode = country.properties.ISO_A2;
+          const isoCode = getCountryIsoCode(country);
           
           // Detect high latitude countries (near poles) for special handling
           let isNearPole = false;
@@ -277,7 +318,7 @@ export default function WorldMap({
           }
           
           // Apply different altitude based on pole proximity and selection
-          if (countryCode === selectedCountry) {
+          if (isoCode === selectedCountry) {
             return isNearPole ? 0.018 : 0.015; // Higher altitude for selected country, even higher near poles
           }
           
@@ -290,14 +331,12 @@ export default function WorldMap({
         polygonLabel={(d) => {
           const country = d as CountryFeature;
           const countryName = country.properties.ADMIN;
-          const countryCode = country.properties.ISO_A2;
           
-          // Skip invalid countries
-          if (!countryCode || countryCode === "-" || countryCode === "-99") {
-            return '';
-          }
+          // Get the ISO code using our helper function
+          const isoCode = getCountryIsoCode(country);
+          if (!isoCode) return '';
           
-          const taxData = getCountryTaxData(countryCode);
+          const taxData = getCountryTaxData(isoCode);
           const taxBandColor = getTaxBandColor(taxData.taxBand, isDarkMode);
           
           // Special note for flat tax or no tax countries
@@ -363,7 +402,7 @@ export default function WorldMap({
                   Country Code:
                 </div>
                 <div style="font-size: 14px; font-weight: 500;">
-                  ${countryCode}
+                  ${isoCode}
                 </div>
               </div>
               
@@ -373,11 +412,7 @@ export default function WorldMap({
         }}
         onPolygonClick={(polygon, event) => {
           const country = polygon as CountryFeature;
-          if (country.properties.ISO_A2 && 
-              country.properties.ISO_A2 !== "-" && 
-              country.properties.ISO_A2 !== "-99") {
-            onCountryClick(country.properties.ISO_A2);
-          }
+          handleCountryClick(country);
         }}
         
         // Add microstate markers
@@ -493,7 +528,7 @@ export default function WorldMap({
         pointResolution={32}
         onPointClick={point => {
           const microstate = point as MicrostateData;
-          onCountryClick(microstate.code);
+          handleMicrostateClick(microstate.code);
           setShowMicrostatesPanel(true);
         }}
       />
@@ -533,12 +568,11 @@ export default function WorldMap({
               return (
                 <button 
                   key={ms.code}
-                  onClick={() => onCountryClick(ms.code)}
+                  onClick={() => handleMicrostateClick(ms.code)}
                   className={`p-2 rounded text-xs flex flex-col items-start transition-all ${
                     selectedCountry === ms.code 
-                      // Use a border and checkmark instead of changing colors
-                      ? 'border-2 border-gray-700 dark:border-gray-300 relative'
-                      : 'hover:bg-primary/5 border border-transparent'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'hover:bg-accent'
                   }`}
                 >
                   {/* Add a checkmark for selected states */}
