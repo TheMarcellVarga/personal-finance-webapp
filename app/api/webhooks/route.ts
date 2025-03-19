@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
   if (event.type === 'checkout.session.completed') {
     // Handle successful payment
-    // Retrieve subscription but don't store in variable since it's unused
+    // Retrieve subscription but don't store it since we're not using it in this example
     await stripe.subscriptions.retrieve(
       session.subscription as string
     );
