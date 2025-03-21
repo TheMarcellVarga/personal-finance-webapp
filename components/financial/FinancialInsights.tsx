@@ -6,6 +6,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTaxStore } from "@/store/taxStore";
 import { getCountryCurrency } from "@/utils/currencyMappings";
 import { PieChart, BarChart, ChevronDown, BarChart3, PieChart as PieChartIcon, LineChart, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title, PointElement, LineElement } from 'chart.js';
+import { Pie, Bar, Line } from 'react-chartjs-2';
+
+// Register ChartJS components
+ChartJS.register(
+  ArcElement, 
+  Tooltip, 
+  Legend, 
+  CategoryScale, 
+  LinearScale, 
+  BarElement, 
+  Title,
+  PointElement,
+  LineElement
+);
 
 interface ExpenseData {
   id: string;
@@ -65,6 +80,7 @@ export default function FinancialInsights() {
   const [activeTab, setActiveTab] = useState("overview");
   const [timeRange, setTimeRange] = useState<"7days" | "30days" | "90days" | "year">("30days");
   const [categoryTotals, setCategoryTotals] = useState<CategoryTotal[]>([]);
+  const [monthlyData, setMonthlyData] = useState<{month: string; total: number}[]>([]);
   
   // Format currency
   const formatCurrency = (amount: number) => {
@@ -103,7 +119,14 @@ export default function FinancialInsights() {
           { id: "5", amount: 65.20, category: "Transportation", date: "2023-05-08" },
           { id: "6", amount: 120, category: "Utilities", date: "2023-05-05" },
           { id: "7", amount: 80, category: "Healthcare", date: "2023-05-16" },
-          { id: "8", amount: 45, category: "Entertainment", date: "2023-05-20" }
+          { id: "8", amount: 45, category: "Entertainment", date: "2023-05-20" },
+          { id: "9", amount: 92.30, category: "Food", date: "2023-04-28" },
+          { id: "10", amount: 42.15, category: "Entertainment", date: "2023-04-20" },
+          { id: "11", amount: 1200, category: "Housing", date: "2023-04-01" },
+          { id: "12", amount: 58.75, category: "Transportation", date: "2023-04-12" },
+          { id: "13", amount: 100, category: "Charitable Donations", date: "2023-03-15" },
+          { id: "14", amount: 1200, category: "Housing", date: "2023-03-01" },
+          { id: "15", amount: 75.40, category: "Food", date: "2023-03-10" }
         ]);
       } finally {
         setIsLoading(false);
@@ -116,6 +139,7 @@ export default function FinancialInsights() {
   // Calculate category totals for visualization
   useEffect(() => {
     calculateCategoryTotals();
+    calculateMonthlyData();
   }, [expenses, timeRange]);
   
   const calculateCategoryTotals = () => {
@@ -168,8 +192,167 @@ export default function FinancialInsights() {
     setCategoryTotals(formattedTotals);
   };
   
+  // Calculate monthly spending for trend analysis
+  const calculateMonthlyData = () => {
+    const now = new Date();
+    const months: Record<string, number> = {};
+    
+    // Get last 6 months based on time range
+    let monthsToShow = 6;
+    if (timeRange === "7days" || timeRange === "30days") {
+      monthsToShow = 3;
+    } else if (timeRange === "year") {
+      monthsToShow = 12;
+    }
+    
+    // Initialize months
+    for (let i = 0; i < monthsToShow; i++) {
+      const d = new Date();
+      d.setMonth(now.getMonth() - i);
+      const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const monthName = d.toLocaleString('default', { month: 'short' });
+      months[monthKey] = 0;
+    }
+    
+    // Sum expenses by month
+    expenses.forEach(expense => {
+      const date = new Date(expense.date);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      
+      if (months[monthKey] !== undefined) {
+        months[monthKey] += expense.amount;
+      }
+    });
+    
+    // Format for chart
+    const formattedMonths = Object.keys(months)
+      .sort()
+      .map(monthKey => {
+        const [year, month] = monthKey.split('-');
+        const date = new Date(parseInt(year), parseInt(month) - 1);
+        return {
+          month: date.toLocaleString('default', { month: 'short' }),
+          total: months[monthKey]
+        };
+      });
+    
+    setMonthlyData(formattedMonths);
+  };
+  
   // Calculate total spending
   const totalSpending = categoryTotals.reduce((sum, category) => sum + category.value, 0);
+
+  // Prepare data for pie chart
+  const pieChartData = {
+    labels: categoryTotals.map(category => category.name),
+    datasets: [
+      {
+        data: categoryTotals.map(category => category.value),
+        backgroundColor: categoryTotals.map(category => category.color),
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Prepare data for bar chart (budget comparison)
+  const barChartData = {
+    labels: categoryTotals.map(category => category.name),
+    datasets: [
+      {
+        label: 'Actual Spending',
+        data: categoryTotals.map(category => category.value),
+        backgroundColor: categoryTotals.map(category => category.color),
+      },
+      {
+        label: 'Budget',
+        data: categoryTotals.map(category => defaultBudgets[category.name] || 100),
+        backgroundColor: 'rgba(150, 150, 150, 0.5)',
+      },
+    ],
+  };
+
+  // Prepare data for line chart (monthly trends)
+  const lineChartData = {
+    labels: monthlyData.map(data => data.month),
+    datasets: [
+      {
+        label: 'Monthly Spending',
+        data: monthlyData.map(data => data.total),
+        borderColor: 'rgb(53, 162, 235)',
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+      },
+    ],
+  };
+
+  // Chart options
+  const pieChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'right' as const,
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context: any) {
+            const label = context.label || '';
+            const value = context.raw || 0;
+            const percentage = (value / totalSpending * 100).toFixed(1);
+            return `${label}: ${formatCurrency(value)} (${percentage}%)`;
+          }
+        }
+      }
+    },
+  };
+
+  const barChartOptions = {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: (value: number) => {
+            return formatCurrency(value);
+          }
+        }
+      }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function(context: any) {
+            const label = context.dataset.label || '';
+            const value = context.raw || 0;
+            return `${label}: ${formatCurrency(value)}`;
+          }
+        }
+      }
+    }
+  };
+
+  const lineChartOptions = {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: (value: number) => {
+            return formatCurrency(value);
+          }
+        }
+      }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function(context: any) {
+            const label = context.dataset.label || '';
+            const value = context.raw || 0;
+            return `${label}: ${formatCurrency(value)}`;
+          }
+        }
+      }
+    }
+  };
   
   return (
     <div className="space-y-6">
@@ -246,14 +429,18 @@ export default function FinancialInsights() {
           
           {/* Visualization Tabs */}
           <Tabs defaultValue="breakdown" className="w-full">
-            <TabsList>
+            <TabsList className="mb-4">
               <TabsTrigger value="breakdown" className="flex items-center gap-2">
                 <PieChartIcon className="h-4 w-4" />
                 Breakdown
               </TabsTrigger>
-              <TabsTrigger value="trends" className="flex items-center gap-2">
+              <TabsTrigger value="comparison" className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4" />
-                Category Detail
+                Budget Comparison
+              </TabsTrigger>
+              <TabsTrigger value="trends" className="flex items-center gap-2">
+                <LineChart className="h-4 w-4" />
+                Monthly Trends
               </TabsTrigger>
             </TabsList>
             
@@ -265,15 +452,15 @@ export default function FinancialInsights() {
                 <CardContent>
                   {categoryTotals.length > 0 ? (
                     <div className="space-y-4">
-                      {/* Visual representation would go here - in a real app this would be a chart */}
-                      <div className="h-64 flex items-center justify-center text-center">
-                        <p className="text-muted-foreground">
-                          [Pie chart visualization would render here - Showing {categoryTotals.length} categories]
-                        </p>
+                      {/* Pie Chart */}
+                      <div className="h-64 w-full flex items-center justify-center">
+                        <div className="h-full w-full max-w-md">
+                          <Pie data={pieChartData} options={pieChartOptions} />
+                        </div>
                       </div>
                       
                       {/* Category list */}
-                      <div className="space-y-2">
+                      <div className="space-y-2 mt-6">
                         {categoryTotals.map((category) => (
                           <div key={category.name} className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
@@ -304,18 +491,21 @@ export default function FinancialInsights() {
               </Card>
             </TabsContent>
             
-            <TabsContent value="trends" className="space-y-4">
+            <TabsContent value="comparison" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Category Comparison</CardTitle>
+                  <CardTitle>Budget vs. Actual Spending</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {categoryTotals.length > 0 ? (
                     <div className="space-y-4">
-                      {/* Budget vs Actual */}
-                      <h3 className="text-sm font-semibold">Budget vs. Actual Spending</h3>
+                      {/* Bar Chart */}
+                      <div className="h-64 w-full">
+                        <Bar data={barChartData} options={barChartOptions} />
+                      </div>
                       
-                      <div className="space-y-4">
+                      {/* Budget detail */}
+                      <div className="space-y-4 mt-6">
                         {categoryTotals.map((category) => {
                           const budget = defaultBudgets[category.name] || 100;
                           const percentage = (category.value / budget) * 100;
@@ -365,6 +555,42 @@ export default function FinancialInsights() {
                   ) : (
                     <div className="flex justify-center items-center h-64">
                       <p>No spending data available for the selected period.</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="trends" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Monthly Spending Trends</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {monthlyData.length > 0 ? (
+                    <div className="space-y-4">
+                      {/* Line Chart */}
+                      <div className="h-64 w-full">
+                        <Line data={lineChartData} options={lineChartOptions} />
+                      </div>
+                      
+                      <div className="mt-6">
+                        <h3 className="text-sm font-semibold mb-2">Monthly Totals</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                          {monthlyData.map((data, index) => (
+                            <Card key={index} className="bg-muted/30">
+                              <CardContent className="p-4">
+                                <p className="text-sm font-medium">{data.month}</p>
+                                <p className="text-lg font-bold">{formatCurrency(data.total)}</p>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex justify-center items-center h-64">
+                      <p>No monthly data available for the selected period.</p>
                     </div>
                   )}
                 </CardContent>
