@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calculator, PiggyBank, LineChart, ArrowRight } from "lucide-react";
+import { Calculator, PiggyBank, LineChart, ArrowRight, BarChart } from "lucide-react";
 import ExpenseTracker from "@/components/financial/ExpenseTracker";
 import RetirementCalculator from "@/components/financial/RetirementCalculator";
 import SavingsGoalTracker from "@/components/financial/SavingsGoalTracker";
+import FinancialInsights from "@/components/financial/FinancialInsights";
 import { Header } from "@/components/Header";
 
 export default function FinancialPlanningPage() {
@@ -35,7 +36,7 @@ export default function FinancialPlanningPage() {
         </div>
 
         <Tabs defaultValue="retirement" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="retirement" className="flex items-center gap-2">
               <Calculator className="h-4 w-4" />
               <span>Retirement Calculator</span>
@@ -47,6 +48,10 @@ export default function FinancialPlanningPage() {
             <TabsTrigger value="expenses" className="flex items-center gap-2">
               <LineChart className="h-4 w-4" />
               <span>Expense Tracker</span>
+            </TabsTrigger>
+            <TabsTrigger value="insights" className="flex items-center gap-2">
+              <BarChart className="h-4 w-4" />
+              <span>Insights</span>
             </TabsTrigger>
           </TabsList>
 
@@ -89,6 +94,20 @@ export default function FinancialPlanningPage() {
               </CardHeader>
               <CardContent>
                 <ExpenseTracker />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="insights">
+            <Card>
+              <CardHeader>
+                <CardTitle>Financial Insights</CardTitle>
+                <CardDescription>
+                  Visualize your spending patterns and get personalized insights to optimize your finances.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FinancialInsights />
               </CardContent>
             </Card>
           </TabsContent>

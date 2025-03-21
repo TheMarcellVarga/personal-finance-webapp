@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -54,35 +54,9 @@ export default function ExpenseTracker() {
                               taxDeductibleCategories.default;
   
   // Expense state
-  const [expenses, setExpenses] = useState<Expense[]>([
-    {
-      id: "1",
-      description: "Grocery shopping",
-      amount: 85.42,
-      date: "2023-05-15",
-      category: "Food",
-      paymentMethod: "Credit Card",
-      potentiallyDeductible: false
-    },
-    {
-      id: "2",
-      description: "Professional software subscription",
-      amount: 49.99,
-      date: "2023-05-12",
-      category: "Business",
-      paymentMethod: "Credit Card",
-      potentiallyDeductible: true
-    },
-    {
-      id: "3",
-      description: "Donation to charity",
-      amount: 100,
-      date: "2023-05-10",
-      category: "Charitable Donations",
-      paymentMethod: "Bank Transfer",
-      potentiallyDeductible: true
-    }
-  ]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   // New expense form state
   const [newExpense, setNewExpense] = useState<Omit<Expense, "id" | "potentiallyDeductible">>({
@@ -92,6 +66,74 @@ export default function ExpenseTracker() {
     category: "Other",
     paymentMethod: "Credit Card",
   });
+  
+  // Fetch expenses from API
+  useEffect(() => {
+    const fetchExpenses = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const response = await fetch('/api/expenses');
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch expenses');
+        }
+        
+        const data = await response.json();
+        
+        // Transform data to match our Expense interface
+        const formattedData = data.map((expense: any) => ({
+          id: expense._id || expense.id,
+          description: expense.description || '',
+          amount: expense.amount,
+          date: new Date(expense.date).toISOString().split('T')[0],
+          category: expense.category,
+          paymentMethod: expense.paymentMethod || 'Credit Card',
+          potentiallyDeductible: expense.potentiallyDeductible || isCategoryDeductible(expense.category)
+        }));
+        
+        setExpenses(formattedData);
+      } catch (err) {
+        console.error('Error fetching expenses:', err);
+        setError('Failed to load expenses. Please try again later.');
+        // Load sample data if API fails
+        setExpenses([
+          {
+            id: "1",
+            description: "Grocery shopping",
+            amount: 85.42,
+            date: "2023-05-15",
+            category: "Food",
+            paymentMethod: "Credit Card",
+            potentiallyDeductible: false
+          },
+          {
+            id: "2",
+            description: "Professional software subscription",
+            amount: 49.99,
+            date: "2023-05-12",
+            category: "Business",
+            paymentMethod: "Credit Card",
+            potentiallyDeductible: true
+          },
+          {
+            id: "3",
+            description: "Donation to charity",
+            amount: 100,
+            date: "2023-05-10",
+            category: "Charitable Donations",
+            paymentMethod: "Bank Transfer",
+            potentiallyDeductible: true
+          }
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchExpenses();
+  }, []);
   
   // Format currency
   const formatCurrency = (amount: number) => {
@@ -109,20 +151,49 @@ export default function ExpenseTracker() {
   };
   
   // Add new expense
-  const handleAddExpense = () => {
-    const id = Math.random().toString(36).substr(2, 9);
-    const potentiallyDeductible = isCategoryDeductible(newExpense.category);
-    
-    setExpenses([...expenses, { ...newExpense, id, potentiallyDeductible }]);
-    
-    // Reset form
-    setNewExpense({
-      description: "",
-      amount: 0,
-      date: new Date().toISOString().split("T")[0],
-      category: "Other",
-      paymentMethod: "Credit Card",
-    });
+  const handleAddExpense = async () => {
+    try {
+      const potentiallyDeductible = isCategoryDeductible(newExpense.category);
+      
+      // Save to API
+      const response = await fetch('/api/expenses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...newExpense,
+          potentiallyDeductible
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to save expense');
+      }
+      
+      const result = await response.json();
+      
+      // Add to local state
+      const newExpenseWithId = { 
+        ...newExpense, 
+        id: result.id, 
+        potentiallyDeductible 
+      };
+      
+      setExpenses([...expenses, newExpenseWithId]);
+      
+      // Reset form
+      setNewExpense({
+        description: "",
+        amount: 0,
+        date: new Date().toISOString().split("T")[0],
+        category: "Other",
+        paymentMethod: "Credit Card",
+      });
+    } catch (err) {
+      console.error('Error adding expense:', err);
+      alert('Failed to save expense. Please try again.');
+    }
   };
   
   // Delete expense
