@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calculator, PiggyBank, LineChart, ArrowRight, BarChart } from "lucide-react";
+import { Calculator, PiggyBank, LineChart, ArrowRight, BarChart, Lightbulb, FileText } from "lucide-react";
 import ExpenseTracker from "@/components/financial/ExpenseTracker";
 import RetirementCalculator from "@/components/financial/RetirementCalculator";
 import SavingsGoalTracker from "@/components/financial/SavingsGoalTracker";
 import FinancialInsights from "@/components/financial/FinancialInsights";
+import FinancialRecommendations from "@/components/financial/FinancialRecommendations";
+import FinancialReport from "@/components/financial/FinancialReport";
 import { Header } from "@/components/Header";
 
 export default function FinancialPlanningPage() {
@@ -36,10 +38,10 @@ export default function FinancialPlanningPage() {
         </div>
 
         <Tabs defaultValue="retirement" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-8">
+          <TabsList className="grid w-full grid-cols-6 mb-8">
             <TabsTrigger value="retirement" className="flex items-center gap-2">
               <Calculator className="h-4 w-4" />
-              <span>Retirement Calculator</span>
+              <span>Retirement</span>
             </TabsTrigger>
             <TabsTrigger value="savings" className="flex items-center gap-2">
               <PiggyBank className="h-4 w-4" />
@@ -47,11 +49,19 @@ export default function FinancialPlanningPage() {
             </TabsTrigger>
             <TabsTrigger value="expenses" className="flex items-center gap-2">
               <LineChart className="h-4 w-4" />
-              <span>Expense Tracker</span>
+              <span>Expenses</span>
             </TabsTrigger>
             <TabsTrigger value="insights" className="flex items-center gap-2">
               <BarChart className="h-4 w-4" />
               <span>Insights</span>
+            </TabsTrigger>
+            <TabsTrigger value="recommendations" className="flex items-center gap-2">
+              <Lightbulb className="h-4 w-4" />
+              <span>AI Advice</span>
+            </TabsTrigger>
+            <TabsTrigger value="reports" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              <span>Reports</span>
             </TabsTrigger>
           </TabsList>
 
@@ -108,6 +118,34 @@ export default function FinancialPlanningPage() {
               </CardHeader>
               <CardContent>
                 <FinancialInsights />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="recommendations">
+            <Card>
+              <CardHeader>
+                <CardTitle>AI-Powered Financial Recommendations</CardTitle>
+                <CardDescription>
+                  Get personalized financial advice based on your spending habits and financial goals.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FinancialRecommendations />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="reports">
+            <Card>
+              <CardHeader>
+                <CardTitle>Financial Reports</CardTitle>
+                <CardDescription>
+                  Generate detailed financial reports to analyze your finances and export them as PDF.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FinancialReport />
               </CardContent>
             </Card>
           </TabsContent>

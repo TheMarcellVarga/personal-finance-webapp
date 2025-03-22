@@ -15,229 +15,92 @@ export interface CurrencyGroups {
   crypto: string[];
 }
 
-export const countryCurrencyMap: Record<string, string> = {
-  // Europe
-  AT: "EUR", // Austria
+/**
+ * Currency code mappings by country code
+ */
+const countryCurrencyMap: Record<string, string> = {
+  US: "USD", // United States
+  UK: "GBP", // United Kingdom
+  GB: "GBP", // Great Britain
+  CA: "CAD", // Canada
+  AU: "AUD", // Australia
+  NZ: "NZD", // New Zealand
+  EU: "EUR", // European Union
+  DE: "EUR", // Germany
+  FR: "EUR", // France
+  IT: "EUR", // Italy
+  ES: "EUR", // Spain
+  PT: "EUR", // Portugal
+  IE: "EUR", // Ireland
+  NL: "EUR", // Netherlands
   BE: "EUR", // Belgium
+  AT: "EUR", // Austria
+  FI: "EUR", // Finland
+  GR: "EUR", // Greece
+  JP: "JPY", // Japan
+  CN: "CNY", // China
+  IN: "INR", // India
+  BR: "BRL", // Brazil
+  RU: "RUB", // Russia
+  ZA: "ZAR", // South Africa
+  MX: "MXN", // Mexico
+  SG: "SGD", // Singapore
+  CH: "CHF", // Switzerland
+  SE: "SEK", // Sweden
+  NO: "NOK", // Norway
+  DK: "DKK", // Denmark
   BG: "BGN", // Bulgaria
   HR: "EUR", // Croatia
   CY: "EUR", // Cyprus
   CZ: "CZK", // Czech Republic
-  DK: "DKK", // Denmark
   EE: "EUR", // Estonia
-  FI: "EUR", // Finland
-  FR: "EUR", // France
-  DE: "EUR", // Germany
-  GR: "EUR", // Greece
   HU: "HUF", // Hungary
-  IE: "EUR", // Ireland
-  IT: "EUR", // Italy
   LV: "EUR", // Latvia
   LT: "EUR", // Lithuania
   LU: "EUR", // Luxembourg
   MT: "EUR", // Malta
-  NL: "EUR", // Netherlands
   PL: "PLN", // Poland
-  PT: "EUR", // Portugal
   RO: "RON", // Romania
   SK: "EUR", // Slovakia
   SI: "EUR", // Slovenia
-  ES: "EUR", // Spain
-  SE: "SEK", // Sweden
   AL: "ALL", // Albania
   BA: "BAM", // Bosnia and Herzegovina
   BY: "BYN", // Belarus
-  CH: "CHF", // Switzerland
-  GB: "GBP", // United Kingdom
   IS: "ISK", // Iceland
   MD: "MDL", // Moldova
-  ME: "EUR", // Montenegro
-  MK: "MKD", // North Macedonia
-  NO: "NOK", // Norway
   RS: "RSD", // Serbia
   UA: "UAH", // Ukraine
-
-  // Americas
-  US: "USD", // United States
-  CA: "CAD", // Canada
-  MX: "MXN", // Mexico
-  BR: "BRL", // Brazil
-  AR: "ARS", // Argentina
   CL: "CLP", // Chile
   CO: "COP", // Colombia
-  PE: "PEN", // Peru
-  UY: "UYU", // Uruguay
-  BO: "BOB", // Bolivia
-  CR: "CRC", // Costa Rica
-  DO: "DOP", // Dominican Republic
-  EC: "USD", // Ecuador
-  GT: "GTQ", // Guatemala
-  HN: "HNL", // Honduras
-  NI: "NIO", // Nicaragua
-  PA: "PAB", // Panama
-  PY: "PYG", // Paraguay
-  SV: "USD", // El Salvador
-  VE: "VES", // Venezuela
   JM: "JMD", // Jamaica
   TT: "TTD", // Trinidad and Tobago
-
-  // Asia
-  CN: "CNY", // China
-  JP: "JPY", // Japan
-  KR: "KRW", // South Korea
-  IN: "INR", // India
   ID: "IDR", // Indonesia
   MY: "MYR", // Malaysia
-  SG: "SGD", // Singapore
   TH: "THB", // Thailand
   VN: "VND", // Vietnam
-  PH: "PHP", // Philippines
-  AF: "AFN", // Afghanistan
-  AM: "AMD", // Armenia
-  AZ: "AZN", // Azerbaijan
-  BD: "BDT", // Bangladesh
-  BN: "BND", // Brunei
-  BT: "BTN", // Bhutan
-  GE: "GEL", // Georgia
-  KH: "KHR", // Cambodia
-  KZ: "KZT", // Kazakhstan
-  KG: "KGS", // Kyrgyzstan
-  LA: "LAK", // Laos
-  LK: "LKR", // Sri Lanka
-  MN: "MNT", // Mongolia
-  MM: "MMK", // Myanmar
-  NP: "NPR", // Nepal
-  PK: "PKR", // Pakistan
-  TJ: "TJS", // Tajikistan
-  TM: "TMT", // Turkmenistan
-  UZ: "UZS", // Uzbekistan
-
-  // Middle East
   IL: "ILS", // Israel
   SA: "SAR", // Saudi Arabia
-  AE: "AED", // United Arab Emirates
-  TR: "TRY", // Turkey
-  QA: "QAR", // Qatar
-  BH: "BHD", // Bahrain
-  KW: "KWD", // Kuwait
-  IQ: "IQD", // Iraq
-  IR: "IRR", // Iran
-  JO: "JOD", // Jordan
-  LB: "LBP", // Lebanon
-  OM: "OMR", // Oman
-  PS: "ILS", // Palestine
-  SY: "SYP", // Syria
-  YE: "YER", // Yemen
-
-  // Africa
-  ZA: "ZAR", // South Africa
   EG: "EGP", // Egypt
   NG: "NGN", // Nigeria
-  KE: "KES", // Kenya
-  MA: "MAD", // Morocco
-  AO: "AOA", // Angola
-  BF: "XOF", // Burkina Faso
-  BI: "BIF", // Burundi
-  BJ: "XOF", // Benin
-  BW: "BWP", // Botswana
-  CD: "CDF", // DR Congo
-  CF: "XAF", // Central African Republic
-  CG: "XAF", // Republic of Congo
-  CI: "XOF", // Ivory Coast
-  CM: "XAF", // Cameroon
-  CV: "CVE", // Cape Verde
-  DJ: "DJF", // Djibouti
-  DZ: "DZD", // Algeria
-  ER: "ERN", // Eritrea
-  ET: "ETB", // Ethiopia
-  GA: "XAF", // Gabon
-  GH: "GHS", // Ghana
-  GM: "GMD", // Gambia
-  GN: "GNF", // Guinea
-  GQ: "XAF", // Equatorial Guinea
-  GW: "XOF", // Guinea-Bissau
-  LR: "LRD", // Liberia
-  LS: "LSL", // Lesotho
-  LY: "LYD", // Libya
-  MG: "MGA", // Madagascar
-  ML: "XOF", // Mali
-  MR: "MRU", // Mauritania
-  MW: "MWK", // Malawi
-  MZ: "MZN", // Mozambique
-  NA: "NAD", // Namibia
-  NE: "XOF", // Niger
-  RW: "RWF", // Rwanda
-  SD: "SDG", // Sudan
-  SL: "SLL", // Sierra Leone
-  SN: "XOF", // Senegal
-  SO: "SOS", // Somalia
-  SS: "SSP", // South Sudan
-  SZ: "SZL", // Eswatini (Swaziland)
-  TD: "XAF", // Chad
-  TG: "XOF", // Togo
-  TN: "TND", // Tunisia
-  TZ: "TZS", // Tanzania
-  UG: "UGX", // Uganda
-  ZM: "ZMW", // Zambia
-  ZW: "ZWL", // Zimbabwe
-
-  // Oceania
-  AU: "AUD", // Australia
-  NZ: "NZD", // New Zealand
   FJ: "FJD", // Fiji
   PG: "PGK", // Papua New Guinea
-  SB: "SBD", // Solomon Islands
-  VU: "VUV", // Vanuatu
-  NC: "XPF", // New Caledonia
   WS: "WST", // Samoa
   TO: "TOP", // Tonga
-
-  // Caribbean
   BS: "BSD", // Bahamas
   BB: "BBD", // Barbados
-  CU: "CUP", // Cuba
-  DM: "XCD", // Dominica
-  GD: "XCD", // Grenada
-  HT: "HTG", // Haiti
-  KN: "XCD", // Saint Kitts and Nevis
   LC: "XCD", // Saint Lucia
   VC: "XCD", // Saint Vincent and the Grenadines
-
-  // Other territories and dependencies
   GL: "DKK", // Greenland (Denmark)
   FO: "DKK", // Faroe Islands (Denmark)
-  GI: "GIP", // Gibraltar (UK)
-  IM: "GBP", // Isle of Man
-  JE: "GBP", // Jersey
-  GG: "GBP", // Guernsey
-  AW: "AWG", // Aruba
-  CW: "ANG", // Curaçao
-  SX: "ANG", // Sint Maarten
-  BM: "BMD", // Bermuda
-  KY: "KYD", // Cayman Islands
-  FK: "FKP", // Falkland Islands
-  GF: "EUR", // French Guiana
-  PF: "XPF", // French Polynesia
-  TF: "EUR", // French Southern Territories
-  MF: "EUR", // Saint Martin
-  PM: "EUR", // Saint Pierre and Miquelon
-  WF: "XPF", // Wallis and Futuna
-  YT: "EUR", // Mayotte
-  RE: "EUR", // Réunion
-  BL: "EUR", // Saint Barthélemy
-  SH: "SHP", // Saint Helena
-  TC: "USD", // Turks and Caicos Islands
-  VI: "USD", // U.S. Virgin Islands
-  AS: "USD", // American Samoa
-  GU: "USD", // Guam
-  MP: "USD", // Northern Mariana Islands
-  PR: "USD", // Puerto Rico
-  UM: "USD", // U.S. Minor Outlying Islands
 };
 
-// Helper function to get currency with fallback
-export const getCountryCurrency = (countryCode: string): string => {
-  return countryCurrencyMap[countryCode] || "USD";
+/**
+ * Get currency code for a given country code
+ * @param countryCode The 2-letter country code
+ * @returns The currency code or undefined if not found
+ */
+export const getCountryCurrency = (countryCode: string): string | undefined => {
+  return countryCurrencyMap[countryCode];
 };
 
 // Helper function to format currency with proper symbol
@@ -489,18 +352,22 @@ export const getCurrencyInfo = (currencyCode: string) => {
   );
 };
 
-// Helper function to format currency with proper locale
-export const formatCurrencyValue = (
+/**
+ * Format a number as currency based on country code
+ * @param amount The amount to format
+ * @param countryCode The country code to determine currency
+ * @returns Formatted currency string
+ */
+export const formatCurrencyForCountry = (
   amount: number,
-  currency: string,
-  locale: string = "en-US",
-  options: Intl.NumberFormatOptions = {}
-) => {
-  return new Intl.NumberFormat(locale, {
+  countryCode: string
+): string => {
+  const currency = getCountryCurrency(countryCode) || "USD";
+  
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,
-    minimumFractionDigits: 0,
+    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-    ...options,
   }).format(amount);
 };
