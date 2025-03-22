@@ -14,7 +14,8 @@ import {
   RefreshCw,
   PieChart,
   LineChart,
-  DollarSign
+  DollarSign,
+  AlertCircle
 } from "lucide-react";
 import { Pie, Bar } from 'react-chartjs-2';
 import jsPDF from 'jspdf';
@@ -49,17 +50,25 @@ interface ExpenseData {
   description?: string;
 }
 
+interface BudgetData {
+  category: string;
+  amount: number;
+  spent: number;
+}
+
 export default function FinancialReport() {
   const { selectedCountry } = useTaxStore();
   const countryCode = selectedCountry || "US";
   const currency = getCountryCurrency(countryCode) || "USD";
   
   const [expenses, setExpenses] = useState<ExpenseData[]>([]);
+  const [budgets, setBudgets] = useState<BudgetData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<"7days" | "30days" | "90days" | "year">("30days");
   const [reportDate, setReportDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [includeBudgetComparison, setIncludeBudgetComparison] = useState(true);
   
   const reportRef = useRef<HTMLDivElement>(null);
   
@@ -75,23 +84,39 @@ export default function FinancialReport() {
   
   // Fetch expenses
   useEffect(() => {
-    const fetchExpenses = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
         setError(null);
         
-        const response = await fetch('/api/expenses');
+        const expenseResponse = await fetch('/api/expenses');
         
-        if (!response.ok) {
+        if (!expenseResponse.ok) {
           throw new Error('Failed to fetch expenses');
         }
         
-        const data = await response.json();
-        setExpenses(data);
+        const expenseData = await expenseResponse.json();
+        setExpenses(expenseData);
+        
+        // Mock budget data for demonstration
+        // In a real app, this would come from an API endpoint
+        const mockBudgets = [
+          { category: "Housing", amount: 1500, spent: 1200 },
+          { category: "Food", amount: 500, spent: 420 },
+          { category: "Transportation", amount: 300, spent: 275 },
+          { category: "Entertainment", amount: 200, spent: 180 },
+          { category: "Healthcare", amount: 250, spent: 150 },
+          { category: "Utilities", amount: 300, spent: 290 },
+          { category: "Shopping", amount: 200, spent: 300 },
+          { category: "Education", amount: 150, spent: 200 },
+          { category: "Business", amount: 100, spent: 50 }
+        ];
+        
+        setBudgets(mockBudgets);
       } catch (err) {
-        console.error('Error fetching expenses:', err);
-        setError('Failed to load expenses. Using sample data.');
-        // Use sample data
+        console.error('Error fetching data:', err);
+        setError('Failed to load data. Using sample data.');
+        // Use sample data for expenses
         setExpenses([
           { id: "1", amount: 85.42, category: "Food", date: "2023-05-15" },
           { id: "2", amount: 49.99, category: "Business", date: "2023-05-12" },
@@ -102,12 +127,22 @@ export default function FinancialReport() {
           { id: "7", amount: 80, category: "Healthcare", date: "2023-05-16" },
           { id: "8", amount: 45, category: "Entertainment", date: "2023-05-20" }
         ]);
+        
+        // Use sample data for budgets
+        setBudgets([
+          { category: "Housing", amount: 1500, spent: 1200 },
+          { category: "Food", amount: 500, spent: 420 },
+          { category: "Transportation", amount: 300, spent: 275 },
+          { category: "Entertainment", amount: 200, spent: 180 },
+          { category: "Healthcare", amount: 250, spent: 150 },
+          { category: "Utilities", amount: 300, spent: 290 }
+        ]);
       } finally {
         setIsLoading(false);
       }
     };
     
-    fetchExpenses();
+    fetchData();
   }, []);
   
   // Calculate timeframe expenses
@@ -231,7 +266,33 @@ export default function FinancialReport() {
     ],
   };
   
-  // Chart options
+  // Budget comparison chart data
+  const getBudgetComparisonData = () => {
+    // Get top categories by budget amount
+    const topBudgets = [...budgets]
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 6);
+    
+    return {
+      labels: topBudgets.map(budget => budget.category),
+      datasets: [
+        {
+          label: 'Budget',
+          data: topBudgets.map(budget => budget.amount),
+          backgroundColor: 'rgba(53, 162, 235, 0.6)',
+        },
+        {
+          label: 'Actual',
+          data: topBudgets.map(budget => budget.spent),
+          backgroundColor: 'rgba(255, 99, 132, 0.6)',
+        }
+      ],
+    };
+  };
+  
+  const budgetComparisonData = getBudgetComparisonData();
+  
+  // Chart options for pie chart
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -242,6 +303,7 @@ export default function FinancialReport() {
     },
   };
   
+  // Chart options for monthly bar chart
   const barChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -252,11 +314,67 @@ export default function FinancialReport() {
     },
   };
   
+  // Budget vs. Actual horizontal bar chart
+  const budgetBarOptions = {
+    indexAxis: 'y' as const,
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        beginAtZero: true,
+        grid: {
+          display: true,
+          color: 'rgba(0, 0, 0, 0.1)',
+        },
+      },
+      y: {
+        grid: {
+          display: false,
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+    },
+  };
+  
   // Calculate totals and stats
   const totalSpent = filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
   const avgDaily = totalSpent / (timeRange === "7days" ? 7 : timeRange === "30days" ? 30 : timeRange === "90days" ? 90 : 365);
   const largestExpense = filteredExpenses.length ? Math.max(...filteredExpenses.map(e => e.amount)) : 0;
   const largestCategory = categoryTotals.length ? categoryTotals.sort((a, b) => b.value - a.value)[0].name : 'N/A';
+  
+  // Check if any categories are over budget
+  const getOverBudgetCategories = () => {
+    return budgets.filter(budget => budget.spent > budget.amount)
+      .sort((a, b) => (b.spent - b.amount) - (a.spent - a.amount));
+  };
+  
+  const overBudgetCategories = getOverBudgetCategories();
+  
+  // Calculate budget health score (simple algorithm for demo)
+  const calculateBudgetHealthScore = () => {
+    if (budgets.length === 0) return 100;
+    
+    let totalBudgeted = 0;
+    let totalOverBudget = 0;
+    
+    budgets.forEach(budget => {
+      totalBudgeted += budget.amount;
+      if (budget.spent > budget.amount) {
+        totalOverBudget += (budget.spent - budget.amount);
+      }
+    });
+    
+    // Calculate score out of 100
+    // Higher score means better budget health
+    const score = Math.max(0, 100 - (totalOverBudget / totalBudgeted * 100));
+    return Math.min(100, Math.round(score));
+  };
+  
+  const budgetHealthScore = calculateBudgetHealthScore();
   
   // Generate and download PDF report
   const generatePDF = async () => {
@@ -336,6 +454,16 @@ export default function FinancialReport() {
       ) : (
         <div className="space-y-6">
           <div className="flex justify-end gap-2 mb-4">
+            <div className="flex items-center mr-4">
+              <input
+                type="checkbox"
+                id="includeBudget"
+                checked={includeBudgetComparison}
+                onChange={(e) => setIncludeBudgetComparison(e.target.checked)}
+                className="mr-2"
+              />
+              <label htmlFor="includeBudget" className="text-sm">Include Budget Comparison</label>
+            </div>
             <Button 
               variant="outline" 
               className="flex items-center gap-2"
@@ -423,6 +551,28 @@ export default function FinancialReport() {
                   </div>
                 </CardContent>
               </Card>
+              
+              {includeBudgetComparison && (
+                <Card className="bg-primary/5">
+                  <CardContent className="pt-6">
+                    <div className="text-center">
+                      <div className={`mx-auto h-8 w-8 rounded-full flex items-center justify-center ${
+                        budgetHealthScore > 80 ? 'bg-green-100 text-green-600' :
+                        budgetHealthScore > 50 ? 'bg-yellow-100 text-yellow-600' :
+                        'bg-red-100 text-red-600'
+                      }`}>
+                        {budgetHealthScore > 80 ? (
+                          <Check className="h-5 w-5" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5" />
+                        )}
+                      </div>
+                      <h3 className="mt-2 font-medium text-muted-foreground">Budget Health</h3>
+                      <p className="text-2xl font-bold">{budgetHealthScore}/100</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
             
             {/* Charts Section */}
@@ -449,6 +599,41 @@ export default function FinancialReport() {
                 </CardContent>
               </Card>
             </div>
+            
+            {/* Budget Comparison (conditional) */}
+            {includeBudgetComparison && (
+              <Card className="mb-8">
+                <CardHeader>
+                  <CardTitle>Budget vs. Actual Spending</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64 mb-6">
+                    <Bar data={budgetComparisonData} options={budgetBarOptions} />
+                  </div>
+                  
+                  {overBudgetCategories.length > 0 && (
+                    <div className="bg-red-50 border border-red-100 rounded-lg p-4 mt-4">
+                      <h4 className="font-semibold text-red-700 mb-2">Categories Over Budget</h4>
+                      <div className="space-y-3">
+                        {overBudgetCategories.map((category, index) => (
+                          <div key={index} className="flex justify-between items-center">
+                            <span>{category.category}</span>
+                            <div className="text-right">
+                              <span className="text-red-600 font-medium">
+                                Over by {formatCurrency(category.spent - category.amount)}
+                              </span>
+                              <div className="text-sm text-muted-foreground">
+                                {formatCurrency(category.spent)} of {formatCurrency(category.amount)} budget
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
             
             {/* Category Breakdown Table */}
             <Card className="mb-8">

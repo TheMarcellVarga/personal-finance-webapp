@@ -3,13 +3,24 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calculator, PiggyBank, LineChart, ArrowRight, BarChart, Lightbulb, FileText } from "lucide-react";
+import { 
+  Calculator, 
+  PiggyBank, 
+  LineChart, 
+  BarChart, 
+  Lightbulb, 
+  FileText, 
+  DollarSign, 
+  Receipt 
+} from "lucide-react";
 import ExpenseTracker from "@/components/financial/ExpenseTracker";
 import RetirementCalculator from "@/components/financial/RetirementCalculator";
 import SavingsGoalTracker from "@/components/financial/SavingsGoalTracker";
 import FinancialInsights from "@/components/financial/FinancialInsights";
 import FinancialRecommendations from "@/components/financial/FinancialRecommendations";
 import FinancialReport from "@/components/financial/FinancialReport";
+import BudgetManager from "@/components/financial/BudgetManager";
+import TaxDeductionAssistant from "@/components/financial/TaxDeductionAssistant";
 import { Header } from "@/components/Header";
 
 export default function FinancialPlanningPage() {
@@ -38,7 +49,7 @@ export default function FinancialPlanningPage() {
         </div>
 
         <Tabs defaultValue="retirement" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-8">
+          <TabsList className="grid w-full grid-cols-8 mb-8">
             <TabsTrigger value="retirement" className="flex items-center gap-2">
               <Calculator className="h-4 w-4" />
               <span>Retirement</span>
@@ -50,6 +61,14 @@ export default function FinancialPlanningPage() {
             <TabsTrigger value="expenses" className="flex items-center gap-2">
               <LineChart className="h-4 w-4" />
               <span>Expenses</span>
+            </TabsTrigger>
+            <TabsTrigger value="budget" className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4" />
+              <span>Budget</span>
+            </TabsTrigger>
+            <TabsTrigger value="tax" className="flex items-center gap-2">
+              <Receipt className="h-4 w-4" />
+              <span>Tax Deductions</span>
             </TabsTrigger>
             <TabsTrigger value="insights" className="flex items-center gap-2">
               <BarChart className="h-4 w-4" />
@@ -118,6 +137,34 @@ export default function FinancialPlanningPage() {
               </CardHeader>
               <CardContent>
                 <FinancialInsights />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="budget">
+            <Card>
+              <CardHeader>
+                <CardTitle>Budget Manager</CardTitle>
+                <CardDescription>
+                  Create and manage your budget categories to track spending against targets.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BudgetManager />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="tax">
+            <Card>
+              <CardHeader>
+                <CardTitle>Tax Deduction Assistant</CardTitle>
+                <CardDescription>
+                  Identify potential tax deductions from your expenses to maximize tax savings.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <TaxDeductionAssistant />
               </CardContent>
             </Card>
           </TabsContent>
