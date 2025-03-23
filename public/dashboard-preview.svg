@@ -1,0 +1,110 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="700" rx="12" fill="#F8FAFC" />
+  <rect width="1200" height="700" rx="12" fill="url(#paint0_radial)" fill-opacity="0.5" />
+  
+  <!-- Header Bar -->
+  <rect x="0" y="0" width="1200" height="60" rx="12" fill="#F1F5F9" />
+  <circle cx="40" cy="30" r="20" fill="#6366F1" fill-opacity="0.2" />
+  <text x="80" y="38" font-family="Arial" font-size="18" font-weight="bold" fill="#1E293B">FinAdventurer</text>
+  
+  <!-- Nav Items -->
+  <text x="300" y="38" font-family="Arial" font-size="14" fill="#64748B">Dashboard</text>
+  <text x="420" y="38" font-family="Arial" font-size="14" fill="#64748B">Calculator</text>
+  <text x="540" y="38" font-family="Arial" font-size="14" fill="#64748B">Financial Planning</text>
+  
+  <!-- Header Title -->
+  <text x="60" y="120" font-family="Arial" font-size="28" font-weight="bold" fill="#1E293B">Financial Dashboard</text>
+  <text x="60" y="150" font-family="Arial" font-size="16" fill="#64748B">Your personal financial command center</text>
+  
+  <!-- Main Cards -->
+  <!-- Main Chart Card -->
+  <rect x="60" y="180" width="700" height="300" rx="8" fill="white" stroke="#E2E8F0" />
+  <text x="80" y="210" font-family="Arial" font-size="16" font-weight="bold" fill="#1E293B">Financial Overview</text>
+  <text x="80" y="230" font-family="Arial" font-size="14" fill="#64748B">Your financial health at a glance</text>
+  
+  <!-- Chart Lines -->
+  <path d="M80 400 Q180 300 280 350 Q380 400 480 320 Q580 240 680 260" stroke="#6366F1" stroke-width="3" fill="none" />
+  <path d="M80 420 Q180 380 280 400 Q380 420 480 390 Q580 360 680 370" stroke="#F87171" stroke-width="3" fill="none" />
+  <path d="M80 380 Q180 340 280 300 Q380 260 480 240 Q580 220 680 200" stroke="#10B981" stroke-width="3" fill="none" />
+  
+  <!-- Chart Legend -->
+  <circle cx="100" cy="450" r="5" fill="#6366F1" />
+  <text x="110" y="455" font-family="Arial" font-size="12" fill="#1E293B">Income</text>
+  
+  <circle cx="180" cy="450" r="5" fill="#F87171" />
+  <text x="190" y="455" font-family="Arial" font-size="12" fill="#1E293B">Expenses</text>
+  
+  <circle cx="270" cy="450" r="5" fill="#10B981" />
+  <text x="280" y="455" font-family="Arial" font-size="12" fill="#1E293B">Savings</text>
+  
+  <!-- Stats Cards -->
+  <rect x="780" y="180" width="360" height="90" rx="8" fill="white" stroke="#E2E8F0" />
+  <text x="800" y="210" font-family="Arial" font-size="14" font-weight="bold" fill="#1E293B">Net Worth</text>
+  <text x="800" y="240" font-family="Arial" font-size="24" font-weight="bold" fill="#1E293B">$124,500</text>
+  <rect x="800" y="255" width="320" height="6" rx="3" fill="#E2E8F0" />
+  <rect x="800" y="255" width="240" height="6" rx="3" fill="#10B981" />
+  
+  <rect x="780" y="285" width="360" height="90" rx="8" fill="white" stroke="#E2E8F0" />
+  <text x="800" y="315" font-family="Arial" font-size="14" font-weight="bold" fill="#1E293B">Budget Status</text>
+  <text x="800" y="345" font-family="Arial" font-size="24" font-weight="bold" fill="#1E293B">$2,340</text>
+  <rect x="800" y="360" width="320" height="6" rx="3" fill="#E2E8F0" />
+  <rect x="800" y="360" width="208" height="6" rx="3" fill="#F59E0B" />
+  
+  <rect x="780" y="390" width="360" height="90" rx="8" fill="white" stroke="#E2E8F0" />
+  <text x="800" y="420" font-family="Arial" font-size="14" font-weight="bold" fill="#1E293B">Savings Goals</text>
+  <text x="800" y="450" font-family="Arial" font-size="24" font-weight="bold" fill="#1E293B">$18,750</text>
+  <rect x="800" y="465" width="320" height="6" rx="3" fill="#E2E8F0" />
+  <rect x="800" y="465" width="240" height="6" rx="3" fill="#10B981" />
+  
+  <!-- Financial Health Score Card -->
+  <rect x="60" y="500" width="360" height="160" rx="8" fill="white" stroke="#E2E8F0" />
+  <text x="80" y="530" font-family="Arial" font-size="16" font-weight="bold" fill="#1E293B">Financial Health Score</text>
+  
+  <!-- Score Circle -->
+  <circle cx="140" cy="590" r="50" fill="none" stroke="#E2E8F0" stroke-width="10" />
+  <path d="M140 540 A50 50 0 0 1 182 625" stroke="#6366F1" stroke-width="10" fill="none" />
+  <text x="125" y="600" font-family="Arial" font-size="24" font-weight="bold" fill="#6366F1">64</text>
+  
+  <!-- Score Metrics -->
+  <rect x="220" y="560" width="180" height="8" rx="4" fill="#E2E8F0" />
+  <rect x="220" y="560" width="140" height="8" rx="4" fill="#10B981" />
+  <text x="220" y="555" font-family="Arial" font-size="12" fill="#64748B">Savings Rate</text>
+  
+  <rect x="220" y="580" width="180" height="8" rx="4" fill="#E2E8F0" />
+  <rect x="220" y="580" width="100" height="8" rx="4" fill="#F59E0B" />
+  <text x="220" y="575" font-family="Arial" font-size="12" fill="#64748B">Debt Management</text>
+  
+  <rect x="220" y="600" width="180" height="8" rx="4" fill="#E2E8F0" />
+  <rect x="220" y="600" width="120" height="8" rx="4" fill="#6366F1" />
+  <text x="220" y="595" font-family="Arial" font-size="12" fill="#64748B">Emergency Fund</text>
+  
+  <rect x="220" y="620" width="180" height="8" rx="4" fill="#E2E8F0" />
+  <rect x="220" y="620" width="90" height="8" rx="4" fill="#8B5CF6" />
+  <text x="220" y="615" font-family="Arial" font-size="12" fill="#64748B">Investment Diversity</text>
+  
+  <!-- AI Advisor Card -->
+  <rect x="440" y="500" width="700" height="160" rx="8" fill="white" stroke="#E2E8F0" />
+  <text x="460" y="530" font-family="Arial" font-size="16" font-weight="bold" fill="#1E293B">AI Financial Advisor</text>
+  
+  <!-- Chat Interface -->
+  <rect x="460" y="550" width="400" height="90" rx="6" fill="#F1F5F9" />
+  <text x="480" y="575" font-family="Arial" font-size="13" fill="#1E293B">Based on your spending patterns, you could save an additional $320 monthly by reducing dining expenses and optimizing subscriptions.</text>
+  
+  <!-- Insights -->
+  <rect x="880" y="550" width="240" height="35" rx="6" fill="#F1F5F9" />
+  <circle cx="900" cy="567" r="10" fill="#10B981" fill-opacity="0.2" />
+  <text x="920" y="572" font-family="Arial" font-size="12" fill="#1E293B">Potential Tax Deduction: $1,800</text>
+  
+  <rect x="880" y="595" width="240" height="35" rx="6" fill="#F1F5F9" />
+  <circle cx="900" cy="612" r="10" fill="#F59E0B" fill-opacity="0.2" />
+  <text x="920" y="617" font-family="Arial" font-size="12" fill="#1E293B">High Credit Card Interest: 24% APR</text>
+  
+  <!-- Gradients -->
+  <defs>
+    <radialGradient id="paint0_radial" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(600 0) rotate(90) scale(700 1200)">
+      <stop stop-color="#6366F1" stop-opacity="0.1" />
+      <stop offset="1" stop-color="#6366F1" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+</svg> 

@@ -1,144 +1,110 @@
-# Personal Finance Assistant 🌍💰
+# Personal Finance App
 
-A personal project that combines interactive 3D visualization with practical financial tools. Built with Next.js, Three.js, and TypeScript, this web application helps users explore global tax systems through an engaging interface.
+A comprehensive personal finance web application built with Next.js 14, TypeScript, and Tailwind CSS. The app helps users manage their finances, track investments, receive AI-powered financial advice, and understand their financial health.
 
-<!-- ![Application Screenshot]
-[Add a screenshot or GIF of your application in action] -->
+![Dashboard Preview](public/dashboard-preview.svg)
 
-## Project Overview
+## Features
 
-This project was built to demonstrate:
-- Modern React patterns and TypeScript implementation
-- Complex UI state management
-- Interactive 3D visualization using Three.js
-- Real-time calculations and currency conversions
-- Responsive design principles
+### Core Features
+- **Financial Dashboard**: A comprehensive command center for monitoring all financial metrics
+- **Authentication**: Secure user authentication system with protected routes
+- **Financial Health Score**: Proprietary algorithm to calculate overall financial wellness 
+- **AI Financial Advisor**: Personalized financial advice based on spending patterns and financial data
+- **Investment Portfolio Tracker**: Track and visualize investment performance across different assets
+- **Tax Insights**: Understand tax implications across different countries
+- **Goals Progress**: Track progress toward financial goals and targets
+- **Recent Transactions**: View and categorize recent financial activity
 
-## Key Features
+### Technical Features
+- Modern React with Next.js 14 App Router
+- TypeScript for type safety
+- Responsive, mobile-friendly design with Tailwind CSS
+- User authentication with Clerk
+- Data visualization with Recharts
+- Modern, accessible components with shadcn/ui
+- Route protection with custom middleware
 
-### Interactive World Globe 🌐
-- Stunning 3D visualization using Three.js
-- Smooth country selection and camera transitions
-- Dynamic light/dark mode adaptation
-- Auto-rotation animation
-- Hover effects and country highlighting
+## Getting Started
 
-### Tax Calculator 📊
-- Support for multiple countries and tax systems
-- Real-time tax bracket breakdown
-- Multi-currency support with live conversions
-- Effective tax rate visualization
-- Social security calculations where applicable
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
 
-### Modern UI/UX ✨
-- Clean, responsive design
-- Dark mode support
-- Intuitive country selection
-- Real-time updates
-- Mobile-friendly interface
+### Installation
 
-## Tech Stack
-
-- **Framework:** Next.js 14
-- **Language:** TypeScript
-- **3D Rendering:** Three.js (react-globe.gl)
-- **Styling:** Tailwind CSS
-- **UI Components:** Shadcn / Radix UI
-- **State Management:** Zustand
-
-## Local Development
-
+1. Clone the repository
 ```bash
-# Clone the repository
-git clone https://github.com/TheMarcellVarga/personal-finance-webapp.git
+git clone https://github.com/yourusername/personal-finance-webapp.git
+cd personal-finance-webapp
+```
 
-# Install dependencies
+2. Install dependencies
+```bash
 npm install
+# or
+yarn install
+```
 
-# Start development server
+3. Set up environment variables
+Create a `.env.local` file with the following variables:
+```
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/auth
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/auth
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+```
+
+4. Run the development server
+```bash
 npm run dev
+# or
+yarn dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to view the application.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## CI/CD Pipeline
-
-This project uses GitHub Actions for continuous integration and deployment:
-
-- **Automated Checks**: Every push and pull request to the main branches triggers linting and build checks
-- **Node.js**: The pipeline runs on the latest LTS version of Node.js
-- **Workflow Files**: 
-  - `.github/workflows/ci.yml`: Runs tests and linting
-  - `.github/workflows/deploy.yml`: Deploys to Vercel
-  - `.github/workflows/kubernetes-deploy.yml`: Deploys to Kubernetes using Helm
-
-To view the CI/CD status, check the Actions tab in the GitHub repository.
-
-## Deployment Options
-
-### Vercel Deployment
-
-For deployment to Vercel, you'll need to:
-1. Generate a Vercel API token from your Vercel account settings
-2. Add this token as a repository secret named `VERCEL_TOKEN` in your GitHub repository settings
-
-### Kubernetes Deployment
-
-For deployment to Kubernetes, you'll need:
-1. A Kubernetes cluster
-2. The following secrets set in your GitHub repository:
-   - `KUBE_CONFIG`: Your Kubernetes config file (base64 encoded)
-   - `DOCKER_REGISTRY`: Your Docker registry URL
-   - `DOCKER_IMAGE_NAME`: Your Docker image name
-
-The Helm chart is located in the `helm/personal-finance-webapp` directory.
-
-## Project Structure Highlights
+## Project Structure
 
 ```
-personal-finance-webapp/
-├── components/
-│   ├── TaxCalculator.tsx    # Tax calculation logic and UI
-│   ├── WorldMap.tsx         # 3D globe visualization
-│   └── ...
-├── utils/
-│   └── currencyMappings.ts  # Currency data and conversions
-└── store/
-    └── taxStore.ts          # Tax calculation state management
+├── app/                  # Main app directory (Next.js App Router)
+│   ├── auth/             # Authentication pages
+│   ├── calculator/       # Tax calculator feature
+│   ├── dashboard/        # Dashboard pages
+│   ├── financial-planning/# Financial planning tools
+│   └── page.tsx          # Landing page
+├── components/           # Reusable components
+│   ├── dashboard/        # Dashboard-specific components
+│   ├── ui/               # UI components (shadcn/ui)
+│   └── Header.tsx        # App header component
+├── lib/                  # Utility functions and shared code
+├── middleware.ts         # Auth middleware for protected routes
+├── public/               # Static assets
+└── styles/               # Global styles
 ```
 
-## Learning Outcomes
+## Technologies Used
 
-Through this project, I:
-- Implemented complex 3D visualizations in React
-- Managed global state with Zustand
-- Handled real-time calculations and currency conversions
-- Created responsive layouts with Tailwind CSS
-- Built reusable React components with TypeScript
+- [Next.js 14](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [shadcn/ui](https://ui.shadcn.com/)
+- [Clerk](https://clerk.dev/) - Authentication
+- [Recharts](https://recharts.org/) - Data visualization
+- [Lucide React](https://lucide.dev/) - Icons
 
 ## Future Enhancements
 
-- [ ] Add more countries and tax systems
-- [ ] Implement historical tax data visualization
-- [ ] Add more financial calculators
-- [ ] Integrate with external APIs for live currency rates
-- [ ] Add more interactive 3D features
+- Subscription management system
+- Bill payment reminder system
+- Financial document storage
+- Multi-currency support
+- Mobile app experience
+- Real-time financial data integration
+- Budget optimization with AI
 
-## 🔗 Connect With Me
+## License
 
-- [Portfolio](https://marcellvarga.com)
-- [LinkedIn](https://www.linkedin.com/in/marcellvarga/)
-- [GitHub](https://github.com/TheMarcellVarga)
-
-## Acknowledgments
-
-Built with:
-- [Next.js](https://nextjs.org/)
-- [React Globe.gl](https://github.com/vasturiano/react-globe.gl)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Radix UI](https://www.radix-ui.com/)
-
-
----
-
-*This is a personal project built for learning and demonstration purposes.*
+This project is licensed under the MIT License - see the LICENSE file for details.

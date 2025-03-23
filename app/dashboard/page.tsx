@@ -19,7 +19,9 @@ import {
   Wallet, 
   Activity,
   Receipt,
-  Calculator
+  Calculator,
+  Sparkles,
+  HeartPulse
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import DashboardOverview from "@/components/dashboard/DashboardOverview";
@@ -27,6 +29,9 @@ import FinancialSummary from "@/components/dashboard/FinancialSummary";
 import GoalsProgress from "@/components/dashboard/GoalsProgress";
 import TaxInsights from "@/components/dashboard/TaxInsights";
 import RecentTransactions from "@/components/dashboard/RecentTransactions";
+import FinancialHealthScore from "@/components/dashboard/FinancialHealthScore";
+import AIFinancialAdvisor from "@/components/dashboard/AIFinancialAdvisor";
+import InvestmentPortfolio from "@/components/dashboard/InvestmentPortfolio";
 
 export default function DashboardPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -166,6 +171,47 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* Financial Health & AI Advisor Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Financial Health Score */}
+          <Card className="border border-primary/10 shadow-md">
+            <CardHeader className="pb-2">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                  <HeartPulse className="h-5 w-5 mr-2 text-primary" />
+                  <CardTitle>Financial Health Score</CardTitle>
+                </div>
+                <Button variant="outline" size="sm">
+                  View Details
+                </Button>
+              </div>
+              <CardDescription>Your overall financial wellness assessment</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <FinancialHealthScore />
+            </CardContent>
+          </Card>
+
+          {/* AI Financial Advisor */}
+          <Card className="border border-primary/10 shadow-md">
+            <CardHeader className="pb-2">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                  <Sparkles className="h-5 w-5 mr-2 text-primary" />
+                  <CardTitle>AI Financial Advisor</CardTitle>
+                </div>
+                <Button variant="outline" size="sm">
+                  Full Consultation
+                </Button>
+              </div>
+              <CardDescription>Personalized financial insights and recommendations</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <AIFinancialAdvisor />
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Second Row */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
           {/* Financial Summary */}
@@ -220,18 +266,39 @@ export default function DashboardPage() {
           </Card>
 
           {/* Recent Transactions */}
-          <Card className="lg:col-span-8 border border-primary/10 shadow-md">
+          <Card className="lg:col-span-7 border border-primary/10 shadow-md">
             <CardHeader className="pb-2">
               <div className="flex justify-between items-center">
                 <CardTitle>Recent Transactions</CardTitle>
                 <Button variant="outline" size="sm">
-                  <Link href="/financial-planning">All Transactions</Link>
+                  <Link href="/transactions">All Transactions</Link>
                 </Button>
               </div>
               <CardDescription>Your recent financial activity</CardDescription>
             </CardHeader>
             <CardContent className="pt-4">
               <RecentTransactions />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Investment Portfolio Section */}
+        <div className="grid grid-cols-1 gap-6 mb-8">
+          <Card className="border border-primary/10 shadow-md">
+            <CardHeader className="pb-2">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                  <TrendingUp className="h-5 w-5 mr-2 text-primary" />
+                  <CardTitle>Investment Portfolio</CardTitle>
+                </div>
+                <Button variant="outline" size="sm">
+                  Portfolio Settings
+                </Button>
+              </div>
+              <CardDescription>Track and analyze your investment performance</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <InvestmentPortfolio />
             </CardContent>
           </Card>
         </div>
