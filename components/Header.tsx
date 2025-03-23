@@ -34,6 +34,12 @@ export function Header({ isDarkMode, toggleDarkMode, pageTitle, actionButton }: 
           </Link>
           <nav className="hidden md:flex items-center space-x-6">
             <Link 
+              href="/dashboard" 
+              className="text-sm text-muted-foreground hover:text-foreground animated-underline py-1"
+            >
+              Dashboard
+            </Link>
+            <Link 
               href="/calculator" 
               className="text-sm text-muted-foreground hover:text-foreground animated-underline py-1"
             >
@@ -101,35 +107,42 @@ export function Header({ isDarkMode, toggleDarkMode, pageTitle, actionButton }: 
               <HamburgerMenuIcon className="h-5 w-5" />
             </Button>
             {isMobileMenuOpen && (
-              <div className="absolute top-16 right-0 w-full bg-background border-b border-primary/10 p-4 shadow-lg">
-                <nav className="flex flex-col space-y-3">
-                  {pageTitle && (
-                    <div className="py-2 px-4 font-semibold border-b border-primary/10 mb-2">
-                      {pageTitle}
-                    </div>
-                  )}
+              <div className="md:hidden bg-background border-t border-b border-primary/10 py-4">
+                <div className="container mx-auto px-6 space-y-4">
+                  <Link 
+                    href="/dashboard" 
+                    className="block py-2 text-foreground hover:text-primary transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
                   <Link 
                     href="/calculator" 
-                    className="text-sm text-muted-foreground hover:text-foreground py-2 px-4 hover:bg-primary/5 rounded-md transition-colors"
+                    className="block py-2 text-foreground hover:text-primary transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Calculator
                   </Link>
                   <Link 
                     href="/financial-planning" 
-                    className="text-sm text-muted-foreground hover:text-foreground py-2 px-4 hover:bg-primary/5 rounded-md transition-colors"
+                    className="block py-2 text-foreground hover:text-primary transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Financial Planning
                   </Link>
                   <Link 
                     href="/pricing" 
-                    className="text-sm text-muted-foreground hover:text-foreground py-2 px-4 hover:bg-primary/5 rounded-md transition-colors"
+                    className="block py-2 text-foreground hover:text-primary transition-colors"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Pricing
                   </Link>
-                </nav>
+                  {pageTitle && (
+                    <div className="py-2 font-semibold">
+                      {pageTitle}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

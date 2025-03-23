@@ -1,12 +1,42 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export default clerkMiddleware();
+export function middleware(request: NextRequest) {
+  // Get the pathname of the request
+  const path = request.nextUrl.pathname;
+  
+  // Define public paths that don't require authentication
+  const isPublicPath = 
+    path === "/" || 
+    path === "/pricing" || 
+    path.startsWith("/calculator") || 
+    path.startsWith("/auth");
+  
+  // Get the token from the cookies
+  const isAuthenticated = request.cookies.has("__session");
+  
+  // Redirect authenticated users from public routes to dashboard
+  if (isAuthenticated && path === "/auth") {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+  
+  // Redirect unauthenticated users to auth page if they try to access protected routes
+  if (!isAuthenticated && path.startsWith("/dashboard")) {
+    return NextResponse.redirect(new URL("/auth", request.url));
+  }
+  
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)).*)",
   ],
 };

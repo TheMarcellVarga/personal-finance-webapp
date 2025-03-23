@@ -31,14 +31,25 @@ export default function Home() {
           </p>
           <div className="animate-in fade-in slide-in-from-bottom-10 duration-1000 delay-300">
             <SignedIn>
-              <Link href="/calculator">
-                <Button
-                  size="lg"
-                  className="rounded-full bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5"
-                >
-                  Continue Exploring
-                </Button>
-              </Link>
+              <div className="flex items-center space-x-4">
+                <Link href="/dashboard">
+                  <Button
+                    size="lg"
+                    className="rounded-full bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5"
+                  >
+                    Go to Dashboard
+                  </Button>
+                </Link>
+                <Link href="/calculator">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="rounded-full hover:bg-primary/10 transition-all duration-300 hover:-translate-y-0.5"
+                  >
+                    Explore Calculators
+                  </Button>
+                </Link>
+              </div>
             </SignedIn>
             <SignedOut>
               <Link href="/auth">
@@ -171,14 +182,25 @@ export default function Home() {
                 Join thousands of users who are making informed financial decisions across borders
               </p>
               <SignedIn>
-                <Link href="/calculator">
-                  <Button
-                    size="lg"
-                    className="rounded-full bg-primary hover:bg-primary/90 transition-all duration-300 hover:-translate-y-0.5"
-                  >
-                    Go to Calculator
-                  </Button>
-                </Link>
+                <div className="flex items-center space-x-4">
+                  <Link href="/dashboard">
+                    <Button
+                      size="lg"
+                      className="rounded-full bg-gradient-to-r from-primary to-primary/80 hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-0.5"
+                    >
+                      Go to Dashboard
+                    </Button>
+                  </Link>
+                  <Link href="/calculator">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="rounded-full hover:bg-primary/10 transition-all duration-300 hover:-translate-y-0.5"
+                    >
+                      Explore Calculators
+                    </Button>
+                  </Link>
+                </div>
               </SignedIn>
               <SignedOut>
                 <Link href="/auth">
