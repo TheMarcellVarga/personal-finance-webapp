@@ -2,8 +2,6 @@
   "buildCommand": "npm run build:vercel",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "buildOptions": {
-    "ignoreEslint": true
-  },
+  "ignoreCommand": "npx next lint --no-cache",
   "devCommand": "npm run dev"
 } 
