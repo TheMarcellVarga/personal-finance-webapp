@@ -310,8 +310,8 @@ export default function FinancialInsights() {
       y: {
         beginAtZero: true,
         ticks: {
-          callback: (value: number) => {
-            return formatCurrency(value);
+          callback: function(tickValue: string | number) {
+            return formatCurrency(Number(tickValue));
           }
         }
       }
@@ -335,8 +335,8 @@ export default function FinancialInsights() {
       y: {
         beginAtZero: true,
         ticks: {
-          callback: (value: number) => {
-            return formatCurrency(value);
+          callback: function(tickValue: string | number) {
+            return formatCurrency(Number(tickValue));
           }
         }
       }

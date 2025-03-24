@@ -45,17 +45,18 @@ interface TaxCalculatorProps {
   useModals?: boolean;
 }
 
-const formatCurrency = (amount: number, currency: string) => {
+const formatCurrency = (amount: number, currency: string | undefined) => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: currency,
+    currency: currency ?? "USD",
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
 };
 
-const getExchangeRate = (from: string, to: string) => {
+const getExchangeRate = (from: string | undefined, to: string) => {
   // This is a simplified example - you should use a real exchange rate API
+  const fromCurrency = from ?? "USD";
   const rates: Record<string, Record<string, number>> = {
     USD: { EUR: 0.92, GBP: 0.79, JPY: 148.41 },
     EUR: { USD: 1.09, GBP: 0.86, JPY: 161.32 },
@@ -63,8 +64,8 @@ const getExchangeRate = (from: string, to: string) => {
     JPY: { USD: 0.0067, EUR: 0.0062, GBP: 0.0053 },
   };
 
-  if (from === to) return 1;
-  return rates[from]?.[to] ?? 1;
+  if (fromCurrency === to) return 1;
+  return rates[fromCurrency]?.[to] ?? 1;
 };
 
 const getMonthlyAmount = (amount: number) => amount / 12;
