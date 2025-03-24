@@ -242,7 +242,7 @@ export default function TaxCalculator({
         
         if (duplicateCodes.has(code)) {
           // Get a unique suffix for this country name
-          let suffix = countryNameSuffixMap.get(name) || 0;
+          const suffix = countryNameSuffixMap.get(name) || 0;
           countryNameSuffixMap.set(name, suffix + 1);
           
           // Create a unique key combining code, name and suffix if needed
@@ -278,7 +278,7 @@ export default function TaxCalculator({
         
         if (duplicateCodes.has(code)) {
           // Get a unique suffix for this country name
-          let suffix = countryNameSuffixMap.get(name) || 0;
+          const suffix = countryNameSuffixMap.get(name) || 0;
           countryNameSuffixMap.set(name, suffix + 1);
           
           // Create a unique key combining code, name and suffix if needed

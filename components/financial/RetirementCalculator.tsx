@@ -86,7 +86,7 @@ export default function RetirementCalculator() {
     // Initialize data
     let balance = currentSavings;
     let totalContributions = currentSavings;
-    let yearlyData = [];
+    const yearlyData = [];
     let taxPaidTotal = 0;
     
     // Calculate yearly growth

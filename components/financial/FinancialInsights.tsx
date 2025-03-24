@@ -144,7 +144,7 @@ export default function FinancialInsights() {
   
   const calculateCategoryTotals = () => {
     const now = new Date();
-    let cutoffDate = new Date();
+    const cutoffDate = new Date();
     
     // Set cutoff date based on selected time range
     switch (timeRange) {

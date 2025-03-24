@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     
     // Calculate date range filter
     const now = new Date();
-    let cutoffDate = new Date();
+    const cutoffDate = new Date();
     
     switch (timeRange) {
       case '7days':
