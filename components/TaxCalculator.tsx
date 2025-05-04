@@ -183,48 +183,19 @@ export default function TaxCalculator({
   const getCountryList = () => {
     // Create a Map to store unique countries by code
     const countryMap = new Map();
-    const duplicateCodes = new Set();
-    const codeCountryMap = new Map();
 
-    // First pass: identify duplicate codes
-    countries.forEach(country => {
-      const code = country.properties?.ISO_A2;
-      const name = country.properties?.ADMIN;
-      
-      if (code) {
-        if (codeCountryMap.has(code)) {
-          duplicateCodes.add(code);
-          console.log(`Duplicate code found in GeoJSON: ${code}`);
-          console.log('Previous country:', codeCountryMap.get(code));
-          console.log('Current country:', name);
-        } else {
-          codeCountryMap.set(code, name);
-        }
-      }
-    });
-    
+    // First add all tax data countries (these take precedence)
     completeEuropeanTaxData.forEach(country => {
-      const code = country.code;
-      const name = country.name;
-      
-      if (code) {
-        if (codeCountryMap.has(code)) {
-          duplicateCodes.add(code);
-          console.log(`Duplicate code found in tax data: ${code}`);
-          console.log('Previous country:', codeCountryMap.get(code));
-          console.log('Current country:', name);
-        } else {
-          codeCountryMap.set(code, name);
-        }
+      if (country.code && country.code.length === 2 && /^[A-Z]{2}$/.test(country.code)) {
+        countryMap.set(country.code, {
+          code: country.code,
+          name: country.name,
+          source: 'taxdata'
+        });
       }
     });
 
-    console.log('All duplicate codes:', Array.from(duplicateCodes));
-    
-    // SKIP ALL countries with -99 code and create unique keys for other duplicates
-    const countryNameSuffixMap = new Map();
-    
-    // Add GeoJSON countries with safe uniqueness handling
+    // Then add GeoJSON countries only if they don't exist in tax data
     countries
       .filter(country => {
         const code = country.properties?.ISO_A2;
@@ -232,82 +203,24 @@ export default function TaxCalculator({
           code.length === 2 && 
           /^[A-Z]{2}$/.test(code) &&
           code !== "-" &&
-          code !== "-99"; // EXPLICITLY filter out -99 codes
+          code !== "-99" &&
+          !countryMap.has(code); // Only add if not already in tax data
       })
       .forEach(country => {
         const code = country.properties.ISO_A2;
-        const name = country.properties.ADMIN;
-        
-        // For duplicate codes, create a truly unique key by combining code and name
-        let uniqueKey = code;
-        
-        if (duplicateCodes.has(code)) {
-          // Get a unique suffix for this country name
-          const suffix = countryNameSuffixMap.get(name) || 0;
-          countryNameSuffixMap.set(name, suffix + 1);
-          
-          // Create a unique key combining code, name and suffix if needed
-          uniqueKey = `${code}_${name.replace(/\s+/g, '_')}${suffix > 0 ? `_${suffix}` : ''}`;
-          
-          console.log(`Created unique key for duplicate country: ${uniqueKey}`);
-        }
-        
-        countryMap.set(uniqueKey, {
+        countryMap.set(code, {
           code: code,
-          name: name,
-          uniqueKey: uniqueKey,
+          name: country.properties.ADMIN,
           source: 'geojson'
         });
       });
 
-    // Add or override with European tax data with similar uniqueness handling
-    completeEuropeanTaxData
-      .filter(country => {
-        const code = country.code;
-        return code && 
-          code.length === 2 && 
-          /^[A-Z]{2}$/.test(code) &&
-          code !== "-" &&
-          code !== "-99"; // EXPLICITLY filter out -99 codes
-      })
-      .forEach(country => {
-        const code = country.code;
-        const name = country.name;
-        
-        // For duplicate codes, create a truly unique key by combining code and name
-        let uniqueKey = code;
-        
-        if (duplicateCodes.has(code)) {
-          // Get a unique suffix for this country name
-          const suffix = countryNameSuffixMap.get(name) || 0;
-          countryNameSuffixMap.set(name, suffix + 1);
-          
-          // Create a unique key combining code, name and suffix if needed
-          uniqueKey = `${code}_${name.replace(/\s+/g, '_')}${suffix > 0 ? `_${suffix}` : ''}`;
-          
-          console.log(`Created unique key for duplicate country: ${uniqueKey}`);
-        }
-        
-        countryMap.set(uniqueKey, {
-          code: code,
-          name: name,
-          uniqueKey: uniqueKey,
-          source: 'taxdata'
-        });
-      });
-      
-    // Filter out any remaining -99 codes (just to be extra safe)
-    const finalCountries = Array.from(countryMap.values())
-      .filter(country => country.code !== "-99");
-      
-    console.log('Final country count after filtering:', finalCountries.length);
-
     // Convert Map to array and sort
-    return finalCountries
+    return Array.from(countryMap.values())
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(country => (
         <SelectItem
-          key={country.uniqueKey}
+          key={country.code}
           value={country.code}
         >
           {country.name}
@@ -431,8 +344,8 @@ export default function TaxCalculator({
                     <p className="text-xl font-bold">
                       {formatCurrency(taxResult.totalTax, selectedCountryCurrency)}
                     </p>
-                    <p className="text-xs text-muted-foreground">
-                      {(taxResult.effectiveRate * 100).toFixed(2)}% effective rate
+                    <p className="text-sm text-muted-foreground">
+                      {((taxResult.effectiveRate * 100).toFixed(2))}% effective rate
                     </p>
                   </div>
                   <div>
@@ -527,12 +440,12 @@ export default function TaxCalculator({
                 <div className="flex flex-col items-center justify-center p-4 bg-secondary/30 rounded-lg">
                   <BadgePercent className="mb-2 text-primary h-8 w-8" />
                   <p className="text-sm text-muted-foreground mb-1">Tax Rate</p>
-                  <p className="text-2xl font-bold">{(taxResult?.effectiveRate || 0) * 100}%</p>
+                  <p className="text-2xl font-bold">{((taxResult?.effectiveRate || 0) * 100).toFixed(2)}%</p>
                 </div>
                 <div className="flex flex-col items-center justify-center p-4 bg-secondary/30 rounded-lg">
                   <PiggyBank className="mb-2 text-primary h-8 w-8" />
                   <p className="text-sm text-muted-foreground mb-1">Keep</p>
-                  <p className="text-2xl font-bold">{(1 - (taxResult?.effectiveRate || 0)) * 100}%</p>
+                  <p className="text-2xl font-bold">{((1 - (taxResult?.effectiveRate || 0)) * 100).toFixed(2)}%</p>
                 </div>
               </div>
               <div className="space-y-4">
