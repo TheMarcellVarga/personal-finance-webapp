@@ -169,8 +169,10 @@ export default function TaxCalculator({
     onCountrySelect(value);
   };
 
+  // Always calculate after-tax income as income minus tax
+  const totalIncome = Number(income) * (incomePeriod === "monthly" ? 12 : 1);
   const afterTaxIncome = taxResult 
-    ? Number(income) * (incomePeriod === "monthly" ? 12 : 1) - taxResult.totalTax 
+    ? totalIncome - taxResult.totalTax 
     : 0;
 
   // Add debugging before the SelectContent
