@@ -350,8 +350,8 @@ export default function TaxCalculator({
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">After Tax</p>
-                    <p className="text-xl font-bold text-green-600 dark:text-green-400">
-                      {formatCurrency(afterTaxIncome, selectedCountryCurrency)}
+                    <p className={`text-xl font-bold ${afterTaxIncome >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {formatCurrency(Math.abs(afterTaxIncome), selectedCountryCurrency)}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {formatCurrency(afterTaxIncome / 12, selectedCountryCurrency)} monthly
@@ -487,8 +487,8 @@ export default function TaxCalculator({
                       </p>
                     </div>
                   </div>
-                  <p className="font-bold text-green-600 dark:text-green-400">
-                    {formatCurrency(afterTaxIncome, selectedCountryCurrency)}
+                  <p className={`font-bold ${afterTaxIncome >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    {formatCurrency(Math.abs(afterTaxIncome), selectedCountryCurrency)}
                   </p>
                 </div>
               </div>
@@ -698,12 +698,8 @@ export default function TaxCalculator({
                     <p className="text-sm text-muted-foreground">
                       After-Tax Income ({selectedCountryCurrency})
                     </p>
-                    <p className="text-2xl font-bold">
-                      {formatCurrency(
-                        Number(income) * (incomePeriod === "monthly" ? 12 : 1) -
-                          taxResult.totalTax,
-                        selectedCountryCurrency
-                      )}
+                    <p className={`text-2xl font-bold ${afterTaxIncome >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                      {formatCurrency(Math.abs(afterTaxIncome), selectedCountryCurrency)}
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">
                       Monthly:{" "}
