@@ -1,10 +1,13 @@
 import { stripe } from '@/lib/stripe';
-import { auth } from '@clerk/nextjs/server';
+// import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
+
+// Mock auth function that returns a fixed user ID
+const mockAuth = async () => ({ userId: 'user_mock123' });
 
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth();
+    const { userId } = await mockAuth();
     const { priceId } = await req.json();
 
     if (!userId) {

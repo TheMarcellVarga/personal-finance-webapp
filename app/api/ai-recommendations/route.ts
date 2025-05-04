@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+// import { auth } from '@clerk/nextjs/server';
 import clientPromise from '@/lib/db';
+
+// Mock auth function that returns a fixed user ID
+const mockAuth = async () => ({ userId: 'user_mock123' });
 
 // Types for recommendation response
 interface RecommendationResponse {
@@ -20,7 +23,7 @@ interface Recommendation {
 
 export async function GET(request: NextRequest) {
   try {
-    const { userId } = await auth();
+    const { userId } = await mockAuth();
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

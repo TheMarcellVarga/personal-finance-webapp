@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Calculator, Globe, ArrowLeftRight, MapPin, Coins, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@/lib/mock-clerk";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 

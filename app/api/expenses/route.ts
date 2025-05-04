@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import clientPromise from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
+// import { auth } from '@clerk/nextjs/server';
 
 // Example expense data
 // In a real app, this would come from a database
@@ -27,6 +27,9 @@ const sampleExpenses = [
   { id: "20", amount: 50, category: "Gifts", date: "2023-03-25", description: "Birthday gift" }
 ];
 
+// Mock auth function that returns a fixed user ID
+const mockAuth = async () => ({ userId: 'user_mock123' });
+
 export async function GET() {
   // Simulate API delay
   await new Promise(resolve => setTimeout(resolve, 500));
@@ -47,7 +50,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth();
+    const { userId } = await mockAuth();
     
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

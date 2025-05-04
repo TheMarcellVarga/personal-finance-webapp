@@ -12,18 +12,18 @@ export function middleware(request: NextRequest) {
     path.startsWith("/calculator") || 
     path.startsWith("/auth");
   
-  // Get the token from the cookies
-  const isAuthenticated = request.cookies.has("__session");
+  // In our mock implementation, all users are authenticated
+  const isAuthenticated = true;
   
   // Redirect authenticated users from public routes to dashboard
   if (isAuthenticated && path === "/auth") {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
   
-  // Redirect unauthenticated users to auth page if they try to access protected routes
-  if (!isAuthenticated && path.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/auth", request.url));
-  }
+  // In mock mode, we'll skip this check since all users are authenticated
+  // if (!isAuthenticated && path.startsWith("/dashboard")) {
+  //   return NextResponse.redirect(new URL("/auth", request.url));
+  // }
   
   return NextResponse.next();
 }

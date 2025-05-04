@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PRICING_PLANS } from '@/lib/stripe';
 import { Check } from 'lucide-react';
-import { useUser } from '@clerk/nextjs';
+// import { useUser } from '@clerk/nextjs';
+import { useUser } from '@/lib/mock-clerk';
 
 export function Pricing() {
   const { isSignedIn } = useUser();

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { MoonIcon, SunIcon, HamburgerMenuIcon } from "@radix-ui/react-icons";
-import { SignedIn, SignedOut, UserButton, SignInButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton, SignInButton } from "@/lib/mock-clerk";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -148,7 +148,7 @@ export function Header({ isDarkMode, toggleDarkMode, pageTitle, actionButton }: 
           </div>
 
           <SignedOut>
-            <SignInButton mode="modal">
+            <SignInButton>
               <Button 
                 variant="default" 
                 className="rounded-full button-hover bg-primary/90 hover:bg-primary"
@@ -158,14 +158,7 @@ export function Header({ isDarkMode, toggleDarkMode, pageTitle, actionButton }: 
             </SignInButton>
           </SignedOut>
           <SignedIn>
-            <UserButton 
-              afterSignOutUrl="/"
-              appearance={{
-                elements: {
-                  avatarBox: "ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-300",
-                }
-              }}
-            />
+            <UserButton />
           </SignedIn>
         </div>
       </div>

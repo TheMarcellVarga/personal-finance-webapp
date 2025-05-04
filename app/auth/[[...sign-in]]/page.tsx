@@ -1,6 +1,6 @@
 "use client";
 
-import { SignIn } from "@clerk/nextjs";
+import { SignIn } from "@/lib/mock-clerk";
 
 export default function AuthPage() {
   return (

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
-import { ClerkProvider } from "@clerk/nextjs";
+// import { ClerkProvider } from "@clerk/nextjs";
+import { MockClerkProvider } from "@/lib/mock-clerk";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <MockClerkProvider>
       <html lang="en" suppressHydrationWarning className="h-full">
         <body className={`${inter.className} h-full`}>
           <AuthProvider>
@@ -25,6 +26,6 @@ export default function RootLayout({
           </AuthProvider>
         </body>
       </html>
-    </ClerkProvider>
+    </MockClerkProvider>
   );
 }
