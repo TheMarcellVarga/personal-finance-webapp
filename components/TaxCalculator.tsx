@@ -354,7 +354,7 @@ export default function TaxCalculator({
                       {formatCurrency(Math.abs(afterTaxIncome), selectedCountryCurrency)}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {formatCurrency(afterTaxIncome / 12, selectedCountryCurrency)} monthly
+                      {afterTaxIncome < 0 ? '-' : ''}{formatCurrency(Math.abs(afterTaxIncome / 12), selectedCountryCurrency)} monthly
                     </p>
                   </div>
                 </div>
