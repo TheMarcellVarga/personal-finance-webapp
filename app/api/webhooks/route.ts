@@ -1,9 +1,21 @@
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
-import Stripe from 'stripe';
+// import Stripe from 'stripe';
 
 export async function POST(req: Request) {
+  // Mock implementation that doesn't require Stripe
+  console.log('Webhook endpoint called - using mock implementation');
+  
+  // Simply return 200 OK for all webhook calls
+  return new NextResponse(JSON.stringify({ status: 'success', message: 'Mock webhook processed' }), { 
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  
+  /* Original implementation - commented out
   const body = await req.text();
   const headersList = await headers();
   const signature = headersList.get('Stripe-Signature') as string;
@@ -26,7 +38,7 @@ export async function POST(req: Request) {
   if (event.type === 'checkout.session.completed') {
     // Handle successful payment
     // Retrieve subscription but don't store it since we're not using it in this example
-    await stripe.subscriptions.retrieve(
+    const subscription = await stripe.subscriptions.retrieve(
       session.subscription as string
     );
 
@@ -57,4 +69,5 @@ export async function POST(req: Request) {
   }
 
   return new NextResponse(null, { status: 200 });
+  */
 } 

@@ -1,13 +1,31 @@
-import Stripe from 'stripe';
+// This file has been modified to work without a real Stripe API key
+// import Stripe from 'stripe';
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is missing. Please set it in your environment variables.');
-}
+// if (!process.env.STRIPE_SECRET_KEY) {
+//   throw new Error('STRIPE_SECRET_KEY is missing. Please set it in your environment variables.');
+// }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-02-24.acacia',
-  typescript: true,
-});
+// export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+//   apiVersion: '2025-02-24.acacia',
+//   typescript: true,
+// });
+
+// Mock Stripe implementation for development
+export const stripe = {
+  checkout: {
+    sessions: {
+      create: async () => ({
+        url: 'https://example.com/mock-checkout',
+      }),
+    },
+  },
+  webhooks: {
+    constructEvent: () => ({
+      type: 'mock.event',
+      data: { object: {} },
+    }),
+  },
+};
 
 export const PLANS = {
   FREE: 'free',
@@ -39,7 +57,7 @@ export const PRICING_PLANS = [
       'Custom categories',
       'Data export',
     ],
-    stripePriceId: process.env.STRIPE_PRO_PRICE_ID || '',
+    stripePriceId: 'mock_pro_price_id',
     planType: PLANS.PRO,
   },
   {
@@ -53,7 +71,7 @@ export const PRICING_PLANS = [
       'Priority support',
       'Custom reporting',
     ],
-    stripePriceId: process.env.STRIPE_ENTERPRISE_PRICE_ID || '',
+    stripePriceId: 'mock_enterprise_price_id',
     planType: PLANS.ENTERPRISE,
   },
 ] as const; 

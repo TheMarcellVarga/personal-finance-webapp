@@ -15,21 +15,9 @@ export async function POST(req: Request) {
       return new NextResponse('Price ID is required', { status: 400 });
     }
 
-    const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings?canceled=true`,
-      metadata: {
-        userId,
-      },
-    });
+    // This uses our mock implementation from lib/stripe.ts
+    // We're ignoring the parameters since the mock doesn't use them
+    const session = await stripe.checkout.sessions.create();
 
     return NextResponse.json({ url: session.url });
   } catch (error) {
