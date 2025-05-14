@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sparkles, SendHorizonal, Lightbulb, ArrowRight, TrendingUp, ChevronRight, Coins, LineChart, Info, BarChart, PiggyBank, ShieldCheck } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Insight {
   id: string;
@@ -31,7 +32,6 @@ export default function AIFinancialAdvisor() {
   const [userQuery, setUserQuery] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [showInsights, setShowInsights] = useState(true);
   
   useEffect(() => {
     // More realistic insights based on actual financial patterns
@@ -139,59 +139,30 @@ export default function AIFinancialAdvisor() {
     }, 1200);
   };
   
-  const getBadgeColors = (type: string) => {
-    switch (type) {
-      case "opportunity":
-        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
-      case "risk":
-        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
-      case "tip":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400";
-    }
-  };
-  
-  const getImpactColors = (impact: string) => {
-    switch (impact) {
-      case "high":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400";
-      case "medium":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
-      case "low":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400";
-      default:
-        return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400";
-    }
-  };
-  
   return (
-    <div className="space-y-6">
-      {/* AI Chat Interface */}
-      <div className="flex flex-col h-[400px] bg-secondary/30 rounded-xl border border-primary/10 overflow-hidden shadow-lg">
-        <div className="flex items-center justify-between p-3 border-b border-primary/10 bg-secondary/50">
-          <div className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-              <Sparkles className="h-4 w-4 text-primary" />
-            </div>
+    <div>
+      <Tabs defaultValue="chat" className="w-full">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Avatar className="h-7 w-7">
+              <AvatarImage src="/ai-assistant.png" alt="AI" />
+              <AvatarFallback className="bg-primary/10">
+                <Sparkles className="h-4 w-4 text-primary" />
+              </AvatarFallback>
+            </Avatar>
             <div>
-              <h3 className="font-medium">Personal Finance AI</h3>
+              <p className="text-sm font-medium">Personal Finance AI</p>
               <p className="text-xs text-muted-foreground">Connected to your accounts</p>
             </div>
           </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setShowInsights(!showInsights)}
-            className="text-xs"
-          >
-            {showInsights ? "Hide Insights" : "Show Insights"}
-          </Button>
+          <TabsList className="h-8">
+            <TabsTrigger value="chat" className="text-xs px-3">Chat</TabsTrigger>
+            <TabsTrigger value="insights" className="text-xs px-3">Insights</TabsTrigger>
+          </TabsList>
         </div>
-        
-        <div className="flex flex-1 overflow-hidden">
-          {/* Chat Messages */}
-          <div className={`flex-1 overflow-y-auto p-4 ${showInsights ? 'w-7/12' : 'w-full'}`}>
+
+        <TabsContent value="chat" className="mt-0 space-y-4">
+          <div className="relative bg-muted/40 rounded-lg p-4 h-[260px] overflow-y-auto">
             <div className="space-y-4">
               {messages.map((message) => (
                 <div 
@@ -199,28 +170,23 @@ export default function AIFinancialAdvisor() {
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   {message.role === 'assistant' && (
-                    <Avatar className="h-8 w-8 mr-2">
-                      <AvatarImage src="/ai-assistant.png" alt="AI" />
+                    <Avatar className="h-6 w-6 mr-2 mt-0.5">
                       <AvatarFallback className="bg-primary/10">
-                        <Sparkles className="h-4 w-4 text-primary" />
+                        <Sparkles className="h-3 w-3 text-primary" />
                       </AvatarFallback>
                     </Avatar>
                   )}
                   <div 
-                    className={`max-w-[85%] rounded-lg px-4 py-2.5 ${
+                    className={`max-w-[80%] rounded-lg px-3 py-2 ${
                       message.role === 'user' 
-                        ? 'bg-primary text-primary-foreground rounded-br-none' 
-                        : 'bg-muted rounded-tl-none'
+                        ? 'bg-primary text-primary-foreground text-sm' 
+                        : 'bg-muted text-sm'
                     }`}
                   >
-                    <div className="text-sm whitespace-pre-line">{message.content}</div>
-                    <div className="text-xs mt-1 opacity-70">
-                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </div>
+                    <div className="whitespace-pre-line">{message.content}</div>
                   </div>
                   {message.role === 'user' && (
-                    <Avatar className="h-8 w-8 ml-2">
-                      <AvatarImage src="/user-avatar.png" alt="User" />
+                    <Avatar className="h-6 w-6 ml-2 mt-0.5">
                       <AvatarFallback>MV</AvatarFallback>
                     </Avatar>
                   )}
@@ -229,16 +195,16 @@ export default function AIFinancialAdvisor() {
               
               {isLoading && (
                 <div className="flex items-start">
-                  <Avatar className="h-8 w-8 mr-2">
+                  <Avatar className="h-6 w-6 mr-2 mt-0.5">
                     <AvatarFallback className="bg-primary/10">
-                      <Sparkles className="h-4 w-4 text-primary" />
+                      <Sparkles className="h-3 w-3 text-primary" />
                     </AvatarFallback>
                   </Avatar>
-                  <div className="max-w-[85%] rounded-lg px-4 py-2.5 bg-muted rounded-tl-none">
+                  <div className="max-w-[80%] rounded-lg px-3 py-2 bg-muted">
                     <div className="flex space-x-2">
-                      <div className="w-2 h-2 rounded-full bg-primary/60 animate-bounce"></div>
-                      <div className="w-2 h-2 rounded-full bg-primary/60 animate-bounce [animation-delay:0.2s]"></div>
-                      <div className="w-2 h-2 rounded-full bg-primary/60 animate-bounce [animation-delay:0.4s]"></div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce"></div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce [animation-delay:0.2s]"></div>
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary/60 animate-bounce [animation-delay:0.4s]"></div>
                     </div>
                   </div>
                 </div>
@@ -246,86 +212,73 @@ export default function AIFinancialAdvisor() {
             </div>
           </div>
           
-          {/* AI Insights Panel */}
-          {showInsights && (
-            <div className="w-5/12 border-l border-primary/10 bg-background/50 overflow-y-auto p-4">
-              <h4 className="text-sm font-medium mb-3 flex items-center">
-                <Info className="h-4 w-4 mr-1.5" />
-                Personalized Financial Insights
-              </h4>
-              <div className="space-y-3">
-                {insights.map((insight) => (
-                  <Card key={insight.id} className="border-primary/10 hover:shadow-md transition-all duration-200">
-                    <CardContent className="p-3">
-                      <div className="flex items-start space-x-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 mt-0.5">
-                          {insight.icon}
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-1">
-                            <h5 className="font-medium text-sm">{insight.title}</h5>
-                            <div className="flex space-x-1">
-                              <Badge 
-                                variant="secondary" 
-                                className={`text-[10px] px-1.5 py-0 ${getBadgeColors(insight.type)}`}
-                              >
-                                {insight.type}
-                              </Badge>
-                              <Badge 
-                                variant="outline" 
-                                className={`text-[10px] px-1.5 py-0 ${getImpactColors(insight.impact)}`}
-                              >
-                                {insight.impact}
-                              </Badge>
-                            </div>
-                          </div>
-                          <p className="text-xs text-muted-foreground mb-2">{insight.description}</p>
-                          {insight.action && (
-                            <a href={insight.actionUrl || "#"} className="text-xs text-primary flex items-center hover:underline">
-                              {insight.action} <ChevronRight className="h-3 w-3 ml-0.5" />
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-        
-        {/* Input Area */}
-        <div className="p-3 border-t border-primary/10 bg-background">
-          <form 
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmitQuery();
-            }}
-            className="flex items-center space-x-2"
-          >
+          <div className="flex gap-2 items-center">
             <Input
               type="text"
               placeholder="Ask me about your finances..."
               value={userQuery}
               onChange={(e) => setUserQuery(e.target.value)}
-              className="flex-1"
+              className="flex-1 h-9 text-sm"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleSubmitQuery();
+                }
+              }}
             />
             <Button 
               type="submit" 
-              size="icon" 
-              className="bg-primary hover:bg-primary/90"
+              size="sm" 
+              className="h-9"
+              onClick={handleSubmitQuery}
               disabled={isLoading || !userQuery.trim()}
             >
-              <SendHorizonal className="h-4 w-4" />
+              <SendHorizonal className="h-4 w-4 mr-1" />
+              Send
             </Button>
-          </form>
-          <div className="mt-2 text-xs text-muted-foreground flex items-center">
-            <Sparkles className="h-3 w-3 mr-1 text-primary" />
-            Try asking: "How can I optimize my investment portfolio?" or "What's my debt reduction plan?"
           </div>
-        </div>
-      </div>
+          
+          <div className="text-xs text-muted-foreground border border-border/40 rounded p-2 flex items-start gap-2">
+            <Lightbulb className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
+            <span>Try asking: "How can I optimize my investment portfolio?" or "What's my debt reduction plan?"</span>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="insights" className="mt-0">
+          <div className="h-[335px] overflow-y-auto pr-1">
+            <div className="space-y-3">
+              {insights.map((insight) => (
+                <Card key={insight.id} className="border border-border/40">
+                  <CardContent className="p-3">
+                    <div className="flex items-start space-x-3">
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 mt-0.5">
+                        {insight.icon}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <h5 className="font-medium text-sm">{insight.title}</h5>
+                          <Badge 
+                            variant="secondary" 
+                            className="text-[10px] px-1.5 py-0 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+                          >
+                            {insight.type}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground mb-2">{insight.description}</p>
+                        {insight.action && (
+                          <a href={insight.actionUrl || "#"} className="text-xs text-primary flex items-center hover:underline">
+                            {insight.action} <ChevronRight className="h-3 w-3 ml-0.5" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 } 
