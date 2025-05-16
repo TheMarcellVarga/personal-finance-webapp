@@ -11,15 +11,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState, ReactNode } from "react";
+import { useTheme } from "@/lib/theme-context";
 
 interface HeaderProps {
-  isDarkMode: boolean;
-  toggleDarkMode: () => void;
   pageTitle?: string;
   actionButton?: ReactNode;
 }
 
-export function Header({ isDarkMode, toggleDarkMode, pageTitle, actionButton }: HeaderProps) {
+export function Header({ pageTitle, actionButton }: HeaderProps) {
+  const { isDarkMode, toggleDarkMode } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -107,7 +107,7 @@ export function Header({ isDarkMode, toggleDarkMode, pageTitle, actionButton }: 
               <HamburgerMenuIcon className="h-5 w-5" />
             </Button>
             {isMobileMenuOpen && (
-              <div className="md:hidden bg-background border-t border-b border-primary/10 py-4">
+              <div className="md:hidden absolute top-16 left-0 right-0 bg-background border-t border-b border-primary/10 py-4">
                 <div className="container mx-auto px-6 space-y-4">
                   <Link 
                     href="/dashboard" 

@@ -290,6 +290,9 @@ export default function FinancialInsights() {
     plugins: {
       legend: {
         position: 'right' as const,
+        labels: {
+          color: 'var(--foreground)'
+        }
       },
       tooltip: {
         callbacks: {
@@ -312,11 +315,28 @@ export default function FinancialInsights() {
         ticks: {
           callback: function(tickValue: string | number) {
             return formatCurrency(Number(tickValue));
-          }
+          },
+          color: 'var(--foreground)'
+        },
+        grid: {
+          color: 'rgba(var(--foreground), 0.1)'
+        }
+      },
+      x: {
+        ticks: {
+          color: 'var(--foreground)'
+        },
+        grid: {
+          color: 'rgba(var(--foreground), 0.1)'
         }
       }
     },
     plugins: {
+      legend: {
+        labels: {
+          color: 'var(--foreground)'
+        }
+      },
       tooltip: {
         callbacks: {
           label: function(context: any) {
@@ -337,11 +357,28 @@ export default function FinancialInsights() {
         ticks: {
           callback: function(tickValue: string | number) {
             return formatCurrency(Number(tickValue));
-          }
+          },
+          color: 'var(--foreground)'
+        },
+        grid: {
+          color: 'rgba(var(--foreground), 0.1)'
+        }
+      },
+      x: {
+        ticks: {
+          color: 'var(--foreground)'
+        },
+        grid: {
+          color: 'rgba(var(--foreground), 0.1)'
         }
       }
     },
     plugins: {
+      legend: {
+        labels: {
+          color: 'var(--foreground)'
+        }
+      },
       tooltip: {
         callbacks: {
           label: function(context: any) {
@@ -357,10 +394,10 @@ export default function FinancialInsights() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">Financial Insights</h2>
+        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">Financial Insights</h2>
         <div className="flex space-x-2">
           <select 
-            className="bg-background border border-indigo-200/50 rounded-md px-3 py-1 text-sm"
+            className="bg-background border border-indigo-200/50 dark:border-indigo-500/30 rounded-md px-3 py-1 text-sm"
             value={timeRange}
             onChange={(e) => setTimeRange(e.target.value as any)}
           >
@@ -377,50 +414,50 @@ export default function FinancialInsights() {
           <p>Loading financial insights...</p>
         </div>
       ) : error ? (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-500/30 text-red-700 dark:text-red-300 px-4 py-3 rounded">
           {error}
         </div>
       ) : (
         <div className="space-y-6">
           {/* Overview Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="border border-indigo-200/30 bg-gradient-to-br from-blue-50/30 to-indigo-50/30">
+            <Card className="border border-indigo-200/30 dark:border-indigo-500/20 bg-gradient-to-br from-blue-50/30 to-indigo-50/30 dark:from-blue-900/20 dark:to-indigo-900/20">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-indigo-700">
+                <CardTitle className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
                   Total Spending
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{formatCurrency(totalSpending)}</div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   For selected period
                 </p>
               </CardContent>
             </Card>
             
-            <Card className="border border-indigo-200/30 bg-gradient-to-br from-indigo-50/30 to-purple-50/30">
+            <Card className="border border-indigo-200/30 dark:border-indigo-500/20 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 dark:from-indigo-900/20 dark:to-purple-900/20">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-purple-700">
+                <CardTitle className="text-sm font-medium text-purple-700 dark:text-purple-300">
                   Top Category
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{categoryTotals[0]?.name || "N/A"}</div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   {categoryTotals[0] ? `${formatCurrency(categoryTotals[0].value)} (${categoryTotals[0].percentage.toFixed(1)}%)` : "No data"}
                 </p>
               </CardContent>
             </Card>
             
-            <Card className="border border-indigo-200/30 bg-gradient-to-br from-purple-50/30 to-pink-50/30">
+            <Card className="border border-indigo-200/30 dark:border-indigo-500/20 bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-purple-900/20 dark:to-pink-900/20">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-pink-700">
+                <CardTitle className="text-sm font-medium text-pink-700 dark:text-pink-300">
                   Categories
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{categoryTotals.length}</div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                   Different spending categories
                 </p>
               </CardContent>
@@ -429,26 +466,26 @@ export default function FinancialInsights() {
           
           {/* Visualization Tabs */}
           <Tabs defaultValue="breakdown" className="w-full">
-            <TabsList className="mb-4 bg-white p-1 border border-indigo-100 shadow-sm">
-              <TabsTrigger value="breakdown" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
+            <TabsList className="mb-4 bg-white dark:bg-gray-800 p-1 border border-indigo-100 dark:border-indigo-700/30 shadow-sm">
+              <TabsTrigger value="breakdown" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 dark:data-[state=active]:bg-indigo-900/40 dark:data-[state=active]:text-indigo-300">
                 <PieChartIcon className="h-4 w-4" />
                 Breakdown
               </TabsTrigger>
-              <TabsTrigger value="comparison" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
+              <TabsTrigger value="comparison" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 dark:data-[state=active]:bg-indigo-900/40 dark:data-[state=active]:text-indigo-300">
                 <BarChart3 className="h-4 w-4" />
                 Budget Comparison
               </TabsTrigger>
-              <TabsTrigger value="trends" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
+              <TabsTrigger value="trends" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 dark:data-[state=active]:bg-indigo-900/40 dark:data-[state=active]:text-indigo-300">
                 <LineChart className="h-4 w-4" />
                 Monthly Trends
               </TabsTrigger>
             </TabsList>
             
             <TabsContent value="breakdown" className="space-y-4">
-              <Card className="border border-indigo-200/30 overflow-hidden">
-                <div className="absolute right-0 top-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
-                <CardHeader className="border-b border-indigo-100/30">
-                  <CardTitle className="text-lg font-semibold text-indigo-800">Spending Breakdown</CardTitle>
+              <Card className="border border-indigo-200/30 dark:border-indigo-500/20 overflow-hidden">
+                <div className="absolute right-0 top-0 w-64 h-64 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <CardHeader className="border-b border-indigo-100/30 dark:border-indigo-700/30">
+                  <CardTitle className="text-lg font-semibold text-indigo-800 dark:text-indigo-300">Spending Breakdown</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
                   {categoryTotals.length > 0 ? (
@@ -493,9 +530,9 @@ export default function FinancialInsights() {
             </TabsContent>
             
             <TabsContent value="comparison" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Budget vs. Actual Spending</CardTitle>
+              <Card className="border border-indigo-200/30 dark:border-indigo-500/20">
+                <CardHeader className="border-b border-indigo-100/30 dark:border-indigo-700/30">
+                  <CardTitle className="text-lg font-semibold text-indigo-800 dark:text-indigo-300">Budget vs. Actual Spending</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {categoryTotals.length > 0 ? (
@@ -529,7 +566,7 @@ export default function FinancialInsights() {
                                   <span className="text-xs font-medium">
                                     of {formatCurrency(budget)}
                                   </span>
-                                  <span className={`text-xs flex items-center ${isOverBudget ? 'text-red-500' : 'text-green-500'}`}>
+                                  <span className={`text-xs flex items-center ${isOverBudget ? 'text-red-500 dark:text-red-400' : 'text-green-500 dark:text-green-400'}`}>
                                     {isOverBudget ? (
                                       <ArrowUpRight className="h-3 w-3 mr-1" />
                                     ) : (
@@ -563,9 +600,9 @@ export default function FinancialInsights() {
             </TabsContent>
             
             <TabsContent value="trends" className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Monthly Spending Trends</CardTitle>
+              <Card className="border border-indigo-200/30 dark:border-indigo-500/20">
+                <CardHeader className="border-b border-indigo-100/30 dark:border-indigo-700/30">
+                  <CardTitle className="text-lg font-semibold text-indigo-800 dark:text-indigo-300">Monthly Spending Trends</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {monthlyData.length > 0 ? (
@@ -579,7 +616,7 @@ export default function FinancialInsights() {
                         <h3 className="text-sm font-semibold mb-2">Monthly Totals</h3>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                           {monthlyData.map((data, index) => (
-                            <Card key={index} className="bg-muted/30">
+                            <Card key={index} className="bg-muted/30 dark:bg-muted/50 border border-indigo-100/20 dark:border-indigo-700/20">
                               <CardContent className="p-4">
                                 <p className="text-sm font-medium">{data.month}</p>
                                 <p className="text-lg font-bold">{formatCurrency(data.total)}</p>

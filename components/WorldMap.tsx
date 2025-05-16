@@ -8,6 +8,7 @@ import { CountryFeature, useCountries } from "@/hooks/useCountries";
 import { getCountryTaxData, getTaxBandColor, getAllCountryTaxData, CountryTaxData, TaxBand } from "@/utils/countryTaxData";
 import { MICROSTATE_COORDS, TAX_HAVEN_CODES } from "@/data/tax-brackets/microstateCoordinates";
 import { completeEuropeanTaxData } from "@/store/taxStore";
+import { useTheme } from "@/lib/theme-context";
 
 // Define microstates with their coordinates, pulling from existing tax data
 // These are small countries that might be hard to see/select on the map
@@ -19,16 +20,15 @@ interface MicrostateData {
 }
 
 interface WorldMapProps {
-  isDarkMode: boolean;
   selectedCountry: string;
   onCountryClick: (countryCode: string) => void;
 }
 
 export default function WorldMap({
-  isDarkMode,
   selectedCountry,
   onCountryClick,
 }: WorldMapProps) {
+  const { isDarkMode } = useTheme();
   const globeRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
@@ -40,11 +40,11 @@ export default function WorldMap({
   const [microstateMarkers, setMicrostateMarkers] = useState<MicrostateData[]>([]);
   const [showMicrostatesPanel, setShowMicrostatesPanel] = useState(false);
   
-  // Use local image files instead of CDN URLs
+  // Use local image files with better dark mode support
   const darkGlobeUrl = "/img/earth-night.jpg";
   const lightGlobeUrl = "//unpkg.com/three-globe/example/img/earth-day.jpg";
 
-  const defaultColor = isDarkMode ? "#1f2937" : "#e5e7eb";
+  const defaultColor = isDarkMode ? "#384152" : "#e5e7eb";
 
   // Prepare microstate data from tax data
   useEffect(() => {
@@ -247,8 +247,8 @@ export default function WorldMap({
         height={dimensions.height}
         globeImageUrl={isDarkMode ? darkGlobeUrl : lightGlobeUrl}
         backgroundImageUrl={null}
-        backgroundColor={isDarkMode ? "rgba(10,10,25,1)" : "rgba(240,240,245,1)"}
-        atmosphereColor={isDarkMode ? "rgba(70,70,120,0.7)" : "rgba(180,180,255,0.2)"}
+        backgroundColor={isDarkMode ? "rgba(15,23,42,1)" : "rgba(240,240,245,1)"}
+        atmosphereColor={isDarkMode ? "rgba(100,120,220,0.8)" : "rgba(180,180,255,0.2)"}
         atmosphereAltitude={0.15}
         polygonsData={countries}
         onGlobeReady={() => setGlobeReady(true)}
@@ -258,38 +258,29 @@ export default function WorldMap({
           
           if (countryCode === selectedCountry) {
             return isDarkMode 
-              ? "rgba(255, 165, 0, 0.8)" // Bright orange for selected country in dark mode
-              : "rgba(255, 140, 0, 0.8)"; // Slightly darker orange for light mode
+              ? "rgba(255, 165, 0, 0.9)" // Brighter orange for selected country in dark mode
+              : "rgba(255, 140, 0, 0.8)";
           }
           
           const taxData = getCountryTaxData(countryCode);
           return isDarkMode 
-            ? `${getTaxBandColor(taxData.taxBand, true)}60` // 37.5% opacity
-            : `${getTaxBandColor(taxData.taxBand, false)}60`; // 37.5% opacity
+            ? `${getTaxBandColor(taxData.taxBand, true)}80` // 50% opacity in dark mode
+            : `${getTaxBandColor(taxData.taxBand, false)}60`; // 37.5% opacity in light mode
         }}
-        polygonSideColor={(d) => {
-          const country = d as CountryFeature;
-          const countryCode = country.properties.ISO_A2;
-          
-          if (countryCode === selectedCountry) {
-            return isDarkMode 
-              ? "rgba(255, 165, 0, 0.5)" // Side color for selected country
-              : "rgba(255, 140, 0, 0.5)";
-          }
-          
-          return "rgba(0, 0, 0, 0)"; // Transparent for non-selected
-        }}
+        polygonSideColor={() => "rgba(0, 0, 0, 0.15)"}
         polygonStrokeColor={(d) => {
           const country = d as CountryFeature;
           const countryCode = country.properties.ISO_A2;
           
           if (countryCode === selectedCountry) {
             return isDarkMode 
-              ? "rgba(255, 255, 255, 0.8)" // White stroke in dark mode
-              : "rgba(0, 0, 0, 0.5)"; // Dark stroke in light mode
+              ? "rgba(255, 255, 255, 0.9)" // Brighter white stroke in dark mode
+              : "rgba(0, 0, 0, 0.5)";
           }
           
-          return "rgba(0, 0, 0, 0)"; // Make borders invisible to prevent glitching
+          return isDarkMode
+            ? "rgba(255, 255, 255, 0.2)" // Subtle borders in dark mode
+            : "rgba(0, 0, 0, 0.15)"; // Subtle borders in light mode
         }}
         polygonAltitude={(d) => {
           const country = d as CountryFeature;
@@ -349,20 +340,21 @@ export default function WorldMap({
           
           return `
             <div style="
-              background-color: ${isDarkMode ? 'rgba(30, 30, 45, 0.95)' : 'rgba(255, 255, 255, 0.95)'}; 
-              color: ${isDarkMode ? 'white' : '#333344'}; 
+              background-color: ${isDarkMode ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)'}; 
+              color: ${isDarkMode ? 'rgba(248, 250, 252, 0.95)' : '#333344'}; 
               border-radius: 6px;
               padding: 14px;
               font-family: system-ui, -apple-system, sans-serif;
-              box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+              box-shadow: 0 4px 20px rgba(0,0,0,${isDarkMode ? '0.5' : '0.3'});
               min-width: 200px;
+              border: 1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'};
             ">
               <div style="
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 10px;
-                border-bottom: 1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'};
+                border-bottom: 1px solid ${isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'};
                 padding-bottom: 8px;
               ">
                 <div style="font-weight: bold; font-size: 18px;">${countryName}</div>
@@ -382,7 +374,7 @@ export default function WorldMap({
                 justify-content: space-between;
                 margin-bottom: 8px;
               ">
-                <div style="font-size: 14px; color: ${isDarkMode ? '#a0a0b8' : '#666680'};">
+                <div style="font-size: 14px; color: ${isDarkMode ? '#e2e8f0' : '#666680'};">
                   Maximum Tax Rate:
                 </div>
                 <div style="
@@ -398,7 +390,7 @@ export default function WorldMap({
                 justify-content: space-between;
                 margin-bottom: ${specialNote ? '6px' : '0'};
               ">
-                <div style="font-size: 14px; color: ${isDarkMode ? '#a0a0b8' : '#666680'};">
+                <div style="font-size: 14px; color: ${isDarkMode ? '#e2e8f0' : '#666680'};">
                   Country Code:
                 </div>
                 <div style="font-size: 14px; font-weight: 500;">
@@ -431,20 +423,21 @@ export default function WorldMap({
           
           return `
             <div style="
-              background-color: ${isDarkMode ? 'rgba(30, 30, 45, 0.95)' : 'rgba(255, 255, 255, 0.95)'}; 
-              color: ${isDarkMode ? 'white' : '#333344'}; 
+              background-color: ${isDarkMode ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)'}; 
+              color: ${isDarkMode ? 'rgba(248, 250, 252, 0.95)' : '#333344'}; 
               border-radius: 6px;
               padding: 14px;
               font-family: system-ui, -apple-system, sans-serif;
-              box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+              box-shadow: 0 4px 20px rgba(0,0,0,${isDarkMode ? '0.5' : '0.3'});
               min-width: 200px;
+              border: 1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'};
             ">
               <div style="
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 margin-bottom: 10px;
-                border-bottom: 1px solid ${isDarkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'};
+                border-bottom: 1px solid ${isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)'};
                 padding-bottom: 8px;
               ">
                 <div style="font-weight: bold; font-size: 18px;">${microstate.name}</div>
@@ -464,7 +457,7 @@ export default function WorldMap({
                 justify-content: space-between;
                 margin-bottom: 8px;
               ">
-                <div style="font-size: 14px; color: ${isDarkMode ? '#a0a0b8' : '#666680'};">
+                <div style="font-size: 14px; color: ${isDarkMode ? '#e2e8f0' : '#666680'};">
                   Maximum Tax Rate:
                 </div>
                 <div style="
@@ -480,7 +473,7 @@ export default function WorldMap({
                 justify-content: space-between;
                 margin-bottom: ${specialNotes ? '6px' : '0'};
               ">
-                <div style="font-size: 14px; color: ${isDarkMode ? '#a0a0b8' : '#666680'};">
+                <div style="font-size: 14px; color: ${isDarkMode ? '#e2e8f0' : '#666680'};">
                   Country Code:
                 </div>
                 <div style="font-size: 14px; font-weight: 500;">
@@ -490,7 +483,7 @@ export default function WorldMap({
               
               ${specialNotes}
               
-              <div style="font-style: italic; font-size: 12px; margin-top: 8px; color: ${isDarkMode ? '#a0a0b8' : '#666680'};">
+              <div style="font-style: italic; font-size: 12px; margin-top: 8px; color: ${isDarkMode ? '#e2e8f0' : '#666680'};">
                 🔍 Tax-advantageous jurisdiction
               </div>
             </div>
@@ -533,9 +526,9 @@ export default function WorldMap({
         }}
       />
       
-      {/* Tax Haven Button */}
+      {/* Tax Haven Button - Improve visibility */}
       <button 
-        className="absolute top-3 right-3 bg-background/80 backdrop-blur-sm p-2 rounded-lg border border-primary/10 text-xs shadow-lg flex items-center gap-1.5 hover:bg-primary/10 transition-all"
+        className="absolute top-3 right-3 bg-background/90 backdrop-blur-sm p-2 rounded-lg border border-primary/20 text-xs shadow-lg flex items-center gap-1.5 hover:bg-primary/10 transition-all"
         onClick={() => setShowMicrostatesPanel(!showMicrostatesPanel)}
       >
         <span className="text-xs font-medium">🏝️ Tax Havens</span>
@@ -544,10 +537,10 @@ export default function WorldMap({
         </span>
       </button>
       
-      {/* Tax Haven Panel */}
+      {/* Tax Haven Panel - Improve visibility */}
       {showMicrostatesPanel && (
         <div className="absolute top-12 right-3 bg-background/95 backdrop-blur-sm p-3 rounded-lg border border-primary/20 shadow-lg max-h-[60vh] overflow-y-auto w-[260px] z-10">
-          <div className="mb-2 pb-1 border-b border-primary/10">
+          <div className="mb-2 pb-1 border-b border-primary/20">
             <h3 className="font-medium text-sm">Tax-Advantageous Jurisdictions</h3>
             <p className="text-xs text-muted-foreground mt-1">Small states with favorable tax policies</p>
             <p className="text-xs text-muted-foreground mt-1 italic">
@@ -571,13 +564,13 @@ export default function WorldMap({
                   onClick={() => handleMicrostateClick(ms.code)}
                   className={`p-2 rounded text-xs flex flex-col items-start transition-all ${
                     selectedCountry === ms.code 
-                    ? 'bg-primary text-primary-foreground'
+                    ? 'bg-primary dark:bg-primary/80 text-primary-foreground'
                     : 'hover:bg-accent'
                   }`}
                 >
                   {/* Add a checkmark for selected states */}
                   {selectedCountry === ms.code && (
-                    <div className="absolute -right-1 -top-1 bg-background rounded-full p-0.5 shadow-sm">
+                    <div className="absolute -right-1 -top-1 bg-background rounded-full p-0.5 shadow-sm border border-primary/20">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
@@ -590,9 +583,10 @@ export default function WorldMap({
                     <span className="text-[10px] text-muted-foreground">{ms.code}</span>
                     {/* Tax rate badge always uses the color based on tax band */}
                     <span 
-                      className="text-[10px] px-1.5 py-0.5 rounded-full text-white" 
+                      className="text-[10px] px-1.5 py-0.5 rounded-full text-white font-medium" 
                       style={{
-                        backgroundColor: getTaxBandColor(taxData.taxBand, isDarkMode)
+                        backgroundColor: getTaxBandColor(taxData.taxBand, isDarkMode),
+                        boxShadow: isDarkMode ? '0 1px 3px rgba(0,0,0,0.3)' : 'none'
                       }}
                     >
                       {taxRate}%
@@ -603,7 +597,7 @@ export default function WorldMap({
             })}
           </div>
           
-          <div className="mt-3 pt-2 border-t border-primary/10">
+          <div className="mt-3 pt-2 border-t border-primary/20">
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">Tax Band Colors:</span>
             </div>
@@ -611,10 +605,11 @@ export default function WorldMap({
               {['no-tax', 'very-low', 'low', 'medium', 'high', 'very-high'].map(band => (
                 <div 
                   key={band}
-                  className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px]"
+                  className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium"
                   style={{
                     backgroundColor: getTaxBandColor(band as any, isDarkMode),
-                    color: 'white'
+                    color: 'white',
+                    boxShadow: isDarkMode ? '0 1px 3px rgba(0,0,0,0.3)' : 'none'
                   }}
                 >
                   {band.replace('-', ' ')}
