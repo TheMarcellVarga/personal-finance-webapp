@@ -31,64 +31,68 @@ export default function FinancialPlanningPage() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/20 via-background to-background">
+      {/* Decorative elements */}
+      <div className="absolute top-20 left-20 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-20 right-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      
       <Header 
         isDarkMode={isDarkMode} 
         toggleDarkMode={toggleDarkMode} 
         pageTitle="Financial Planning" 
       />
-      <div className="container mx-auto p-6 pt-20 pb-20">
+      <div className="container mx-auto p-6 pt-20 pb-20 relative z-10">
         <div className="mb-10 text-center">
-          <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/70 to-primary">
+          <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600">
             Financial Planning Tools
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Plan your financial future with our comprehensive tools designed to help you achieve your goals,
             with integrated tax calculations for more accurate projections.
           </p>
         </div>
 
         <Tabs defaultValue="retirement" className="w-full">
-          <TabsList className="grid w-full grid-cols-8 mb-8">
-            <TabsTrigger value="retirement" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-8 mb-8 bg-white p-1 border border-indigo-100 rounded-lg shadow-sm">
+            <TabsTrigger value="retirement" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
               <Calculator className="h-4 w-4" />
               <span>Retirement</span>
             </TabsTrigger>
-            <TabsTrigger value="savings" className="flex items-center gap-2">
+            <TabsTrigger value="savings" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
               <PiggyBank className="h-4 w-4" />
               <span>Savings Goals</span>
             </TabsTrigger>
-            <TabsTrigger value="expenses" className="flex items-center gap-2">
+            <TabsTrigger value="expenses" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
               <LineChart className="h-4 w-4" />
               <span>Expenses</span>
             </TabsTrigger>
-            <TabsTrigger value="budget" className="flex items-center gap-2">
+            <TabsTrigger value="budget" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
               <DollarSign className="h-4 w-4" />
               <span>Budget</span>
             </TabsTrigger>
-            <TabsTrigger value="tax" className="flex items-center gap-2">
+            <TabsTrigger value="tax" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
               <Receipt className="h-4 w-4" />
               <span>Tax Deductions</span>
             </TabsTrigger>
-            <TabsTrigger value="insights" className="flex items-center gap-2">
+            <TabsTrigger value="insights" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
               <BarChart className="h-4 w-4" />
               <span>Insights</span>
             </TabsTrigger>
-            <TabsTrigger value="recommendations" className="flex items-center gap-2">
+            <TabsTrigger value="recommendations" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
               <Lightbulb className="h-4 w-4" />
               <span>AI Advice</span>
             </TabsTrigger>
-            <TabsTrigger value="reports" className="flex items-center gap-2">
+            <TabsTrigger value="reports" className="flex items-center gap-2 data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700">
               <FileText className="h-4 w-4" />
               <span>Reports</span>
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="retirement">
-            <Card>
-              <CardHeader>
-                <CardTitle>Retirement Calculator</CardTitle>
-                <CardDescription>
+            <Card className="border border-indigo-200/30 bg-gradient-to-br from-white to-indigo-50/20 shadow-md">
+              <CardHeader className="border-b border-indigo-100/30">
+                <CardTitle className="text-indigo-800">Retirement Calculator</CardTitle>
+                <CardDescription className="text-gray-600">
                   Plan for your retirement by calculating how your savings will grow over time, 
                   accounting for tax implications in different countries.
                 </CardDescription>
@@ -100,10 +104,10 @@ export default function FinancialPlanningPage() {
           </TabsContent>
 
           <TabsContent value="savings">
-            <Card>
-              <CardHeader>
-                <CardTitle>Savings Goal Tracker</CardTitle>
-                <CardDescription>
+            <Card className="border border-indigo-200/30 bg-gradient-to-br from-white to-indigo-50/20 shadow-md">
+              <CardHeader className="border-b border-indigo-100/30">
+                <CardTitle className="text-indigo-800">Savings Goal Tracker</CardTitle>
+                <CardDescription className="text-gray-600">
                   Set and track your savings goals with tax-efficient investment recommendations.
                 </CardDescription>
               </CardHeader>
@@ -114,10 +118,10 @@ export default function FinancialPlanningPage() {
           </TabsContent>
 
           <TabsContent value="expenses">
-            <Card>
-              <CardHeader>
-                <CardTitle>Expense Tracker</CardTitle>
-                <CardDescription>
+            <Card className="border border-indigo-200/30 bg-gradient-to-br from-white to-indigo-50/20 shadow-md">
+              <CardHeader className="border-b border-indigo-100/30">
+                <CardTitle className="text-indigo-800">Expense Tracker</CardTitle>
+                <CardDescription className="text-gray-600">
                   Track your expenses and identify tax-deductible spending to optimize your finances.
                 </CardDescription>
               </CardHeader>
@@ -128,10 +132,10 @@ export default function FinancialPlanningPage() {
           </TabsContent>
           
           <TabsContent value="insights">
-            <Card>
-              <CardHeader>
-                <CardTitle>Financial Insights</CardTitle>
-                <CardDescription>
+            <Card className="border border-indigo-200/30 bg-gradient-to-br from-white to-indigo-50/20 shadow-md">
+              <CardHeader className="border-b border-indigo-100/30">
+                <CardTitle className="text-indigo-800">Financial Insights</CardTitle>
+                <CardDescription className="text-gray-600">
                   Visualize your spending patterns and get personalized insights to optimize your finances.
                 </CardDescription>
               </CardHeader>
@@ -142,10 +146,10 @@ export default function FinancialPlanningPage() {
           </TabsContent>
           
           <TabsContent value="budget">
-            <Card>
-              <CardHeader>
-                <CardTitle>Budget Manager</CardTitle>
-                <CardDescription>
+            <Card className="border border-indigo-200/30 bg-gradient-to-br from-white to-indigo-50/20 shadow-md">
+              <CardHeader className="border-b border-indigo-100/30">
+                <CardTitle className="text-indigo-800">Budget Manager</CardTitle>
+                <CardDescription className="text-gray-600">
                   Create and manage your budget categories to track spending against targets.
                 </CardDescription>
               </CardHeader>
@@ -156,10 +160,10 @@ export default function FinancialPlanningPage() {
           </TabsContent>
           
           <TabsContent value="tax">
-            <Card>
-              <CardHeader>
-                <CardTitle>Tax Deduction Assistant</CardTitle>
-                <CardDescription>
+            <Card className="border border-indigo-200/30 bg-gradient-to-br from-white to-indigo-50/20 shadow-md">
+              <CardHeader className="border-b border-indigo-100/30">
+                <CardTitle className="text-indigo-800">Tax Deduction Assistant</CardTitle>
+                <CardDescription className="text-gray-600">
                   Identify potential tax deductions from your expenses to maximize tax savings.
                 </CardDescription>
               </CardHeader>
@@ -170,10 +174,10 @@ export default function FinancialPlanningPage() {
           </TabsContent>
           
           <TabsContent value="recommendations">
-            <Card>
-              <CardHeader>
-                <CardTitle>AI-Powered Financial Recommendations</CardTitle>
-                <CardDescription>
+            <Card className="border border-indigo-200/30 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 shadow-md">
+              <CardHeader className="border-b border-indigo-100/30">
+                <CardTitle className="text-purple-800">AI-Powered Financial Recommendations</CardTitle>
+                <CardDescription className="text-gray-600">
                   Get personalized financial advice based on your spending habits and financial goals.
                 </CardDescription>
               </CardHeader>
@@ -184,10 +188,10 @@ export default function FinancialPlanningPage() {
           </TabsContent>
           
           <TabsContent value="reports">
-            <Card>
-              <CardHeader>
-                <CardTitle>Financial Reports</CardTitle>
-                <CardDescription>
+            <Card className="border border-indigo-200/30 bg-gradient-to-br from-white to-indigo-50/20 shadow-md">
+              <CardHeader className="border-b border-indigo-100/30">
+                <CardTitle className="text-indigo-800">Financial Reports</CardTitle>
+                <CardDescription className="text-gray-600">
                   Generate detailed financial reports to analyze your finances and export them as PDF.
                 </CardDescription>
               </CardHeader>

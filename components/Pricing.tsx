@@ -35,17 +35,29 @@ export function Pricing() {
     }
   };
 
-  const planIcons = {
-    'Explorer': <Globe className="h-12 w-12 text-primary/60" />,
-    'Global Pro': <Calculator className="h-12 w-12 text-primary/80" />,
-    'Tax Advisor': <BarChart3 className="h-12 w-12 text-primary" />
+  const planDetails = {
+    'Explorer': {
+      icon: <Globe className="h-12 w-12 text-blue-500" />,
+      gradient: "from-blue-50/30 to-indigo-50/30",
+      titleColor: "text-blue-700",
+    },
+    'Global Pro': {
+      icon: <Calculator className="h-12 w-12 text-indigo-500" />,
+      gradient: "from-indigo-50/30 to-purple-50/30",
+      titleColor: "text-indigo-700",
+    },
+    'Tax Advisor': {
+      icon: <BarChart3 className="h-12 w-12 text-purple-500" />,
+      gradient: "from-purple-50/30 to-pink-50/30",
+      titleColor: "text-purple-700",
+    }
   };
 
   return (
     <div className="py-12 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+          <h2 className="text-3xl font-bold sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600">
             Compare Tax Systems Worldwide
           </h2>
           <p className="mt-4 text-lg text-gray-600">
@@ -53,46 +65,58 @@ export function Pricing() {
           </p>
         </div>
         <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {PRICING_PLANS.map((plan) => (
-            <Card key={plan.name} className={`flex flex-col p-8 border ${
-              plan.name === 'Global Pro' 
-                ? 'border-primary/20 bg-primary/5 shadow-lg hover:shadow-xl' 
-                : 'border-primary/10 hover:border-primary/30'
-              } transition-all duration-300 hover:-translate-y-1`}>
-              <div className="mb-4">
-                {planIcons[plan.name as keyof typeof planIcons]}
-              </div>
-              <h3 className="text-2xl font-semibold">{plan.name}</h3>
-              <p className="mt-2 text-gray-600">{plan.description}</p>
-              <div className="mt-6">
-                <span className="text-4xl font-bold">${plan.price}</span>
-                {plan.price > 0 && <span className="text-gray-600">/month</span>}
-              </div>
-              <ul className="mt-8 space-y-3 flex-1">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center">
-                    <Check className="h-5 w-5 text-primary mr-2 flex-shrink-0" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-              <Button
-                className={`mt-8 ${plan.name === 'Global Pro' ? 'bg-primary hover:bg-primary/90' : ''}`}
-                size="lg"
-                variant={plan.planType === 'free' ? 'outline' : 'default'}
-                disabled={!isSignedIn || isLoading === plan.stripePriceId}
-                onClick={() => plan.stripePriceId && handleSubscribe(plan.stripePriceId)}
+          {PRICING_PLANS.map((plan) => {
+            const details = planDetails[plan.name as keyof typeof planDetails];
+            return (
+              <Card 
+                key={plan.name} 
+                className={`flex flex-col p-8 border border-indigo-200/30 bg-gradient-to-br ${details.gradient} 
+                ${plan.name === 'Global Pro' ? 'shadow-lg hover:shadow-xl' : 'shadow-md'} 
+                transition-all duration-300 hover:-translate-y-1`}
               >
-                {isLoading === plan.stripePriceId ? (
-                  'Processing...'
-                ) : plan.planType === 'free' ? (
-                  'Get Started'
-                ) : (
-                  `Subscribe to ${plan.name}`
-                )}
-              </Button>
-            </Card>
-          ))}
+                <div className="mb-4 p-3 rounded-full bg-white/70 shadow-md w-fit">
+                  {details.icon}
+                </div>
+                <h3 className={`text-2xl font-semibold ${details.titleColor}`}>{plan.name}</h3>
+                <p className="mt-2 text-gray-600">{plan.description}</p>
+                <div className="mt-6">
+                  <span className={`text-4xl font-bold ${details.titleColor}`}>${plan.price}</span>
+                  {plan.price > 0 && <span className="text-gray-600">/month</span>}
+                </div>
+                <ul className="mt-8 space-y-3 flex-1">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-center">
+                      <div className="bg-indigo-100 rounded-full p-1 mr-2">
+                        <Check className={`h-4 w-4 ${details.titleColor}`} />
+                      </div>
+                      <span className="text-gray-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  className={`mt-8 ${
+                    plan.name === 'Global Pro' 
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:shadow-lg hover:shadow-indigo-500/20' 
+                      : plan.name === 'Tax Advisor'
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:shadow-lg hover:shadow-purple-500/20'
+                      : 'border-indigo-200 hover:bg-indigo-50/10'
+                  }`}
+                  size="lg"
+                  variant={plan.planType === 'free' ? 'outline' : 'default'}
+                  disabled={!isSignedIn || isLoading === plan.stripePriceId}
+                  onClick={() => plan.stripePriceId && handleSubscribe(plan.stripePriceId)}
+                >
+                  {isLoading === plan.stripePriceId ? (
+                    'Processing...'
+                  ) : plan.planType === 'free' ? (
+                    'Get Started'
+                  ) : (
+                    `Subscribe to ${plan.name}`
+                  )}
+                </Button>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>
