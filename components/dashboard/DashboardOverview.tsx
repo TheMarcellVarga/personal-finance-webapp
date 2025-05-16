@@ -18,6 +18,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { BadgeDelta, DeltaType } from "@/components/ui/badge-delta";
+import { useTheme } from "@/lib/theme-context";
 
 // Register ChartJS components
 ChartJS.register(
@@ -60,6 +61,7 @@ interface FinancialMetric {
 }
 
 export default function DashboardOverview() {
+  const { isDarkMode } = useTheme();
   const [chartData, setChartData] = useState<ChartDataType>({
     labels: [],
     datasets: [],
@@ -70,7 +72,7 @@ export default function DashboardOverview() {
   useEffect(() => {
     generateChartData(timeRange);
     generateMetrics();
-  }, [timeRange]);
+  }, [timeRange, isDarkMode]);
 
   const generateMetrics = () => {
     setMetrics([
@@ -191,44 +193,54 @@ export default function DashboardOverview() {
       savingsData.push(Math.round(income - expenses));
     }
     
+    // Use different colors in dark mode for better visibility
+    const incomeColor = isDarkMode ? 'rgba(110, 230, 230, 1)' : 'rgba(75, 192, 192, 1)';
+    const incomeBgColor = isDarkMode ? 'rgba(110, 230, 230, 0.2)' : 'rgba(75, 192, 192, 0.2)';
+    
+    const expensesColor = isDarkMode ? 'rgba(255, 120, 150, 1)' : 'rgba(255, 99, 132, 1)';
+    const expensesBgColor = isDarkMode ? 'rgba(255, 120, 150, 0.2)' : 'rgba(255, 99, 132, 0.2)';
+    
+    const savingsColor = isDarkMode ? 'rgba(100, 180, 255, 1)' : 'rgba(54, 162, 235, 1)';
+    const savingsBgColor = isDarkMode ? 'rgba(100, 180, 255, 0.2)' : 'rgba(54, 162, 235, 0.2)';
+    
     setChartData({
       labels,
       datasets: [
         {
           label: 'Income',
           data: incomeData,
-          borderColor: 'rgba(75, 192, 192, 1)',
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: incomeColor,
+          backgroundColor: incomeBgColor,
           tension: 0.3,
           fill: false,
           pointRadius: 3,
           pointHoverRadius: 5,
-          pointBackgroundColor: 'rgba(75, 192, 192, 1)',
-          pointBorderColor: '#fff',
+          pointBackgroundColor: incomeColor,
+          pointBorderColor: isDarkMode ? '#2D3748' : '#fff',
         },
         {
           label: 'Expenses',
           data: expensesData,
-          borderColor: 'rgba(255, 99, 132, 1)',
-          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: expensesColor,
+          backgroundColor: expensesBgColor,
           tension: 0.3,
           fill: false,
           pointRadius: 3,
           pointHoverRadius: 5,
-          pointBackgroundColor: 'rgba(255, 99, 132, 1)',
-          pointBorderColor: '#fff',
+          pointBackgroundColor: expensesColor,
+          pointBorderColor: isDarkMode ? '#2D3748' : '#fff',
         },
         {
           label: 'Savings',
           data: savingsData,
-          borderColor: 'rgba(54, 162, 235, 1)',
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: savingsColor,
+          backgroundColor: savingsBgColor,
           tension: 0.3,
           fill: true,
           pointRadius: 3,
           pointHoverRadius: 5,
-          pointBackgroundColor: 'rgba(54, 162, 235, 1)',
-          pointBorderColor: '#fff',
+          pointBackgroundColor: savingsColor,
+          pointBorderColor: isDarkMode ? '#2D3748' : '#fff',
         }
       ],
     });
@@ -240,10 +252,21 @@ export default function DashboardOverview() {
     plugins: {
       legend: {
         position: 'top',
+        labels: {
+          color: isDarkMode ? '#e2e8f0' : '#333',
+          font: {
+            size: 12
+          }
+        }
       },
       tooltip: {
         mode: 'index',
         intersect: false,
+        backgroundColor: isDarkMode ? 'rgba(17, 24, 39, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+        titleColor: isDarkMode ? '#e2e8f0' : '#333',
+        bodyColor: isDarkMode ? '#e2e8f0' : '#333',
+        borderColor: isDarkMode ? 'rgba(75, 85, 99, 0.3)' : 'rgba(0, 0, 0, 0.1)',
+        borderWidth: 1,
         callbacks: {
           label: function(context: any) {
             let label = context.dataset.label || '';
@@ -264,10 +287,22 @@ export default function DashboardOverview() {
     scales: {
       y: {
         beginAtZero: true,
+        grid: {
+          color: isDarkMode ? 'rgba(156, 163, 175, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+        },
         ticks: {
+          color: isDarkMode ? '#cbd5e1' : '#333',
           callback: function(value: any) {
             return '$' + value.toLocaleString();
           }
+        }
+      },
+      x: {
+        grid: {
+          color: isDarkMode ? 'rgba(156, 163, 175, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+        },
+        ticks: {
+          color: isDarkMode ? '#cbd5e1' : '#333',
         }
       }
     },

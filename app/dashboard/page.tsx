@@ -55,7 +55,7 @@ export default function DashboardPage() {
 
         {/* Top Row - Key Financial Metrics */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-blue-50/30 to-indigo-50/30 dark:from-blue-900/10 dark:to-indigo-900/10 shadow-md">
+          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-blue-50/30 to-indigo-50/30 dark:from-blue-900/20 dark:to-indigo-900/20 shadow-md">
             <CardContent className="p-3 sm:p-4">
               <div className="flex flex-col">
                 <p className="text-xs sm:text-sm text-indigo-700 dark:text-indigo-300 mb-1">Net Worth</p>
@@ -75,7 +75,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 dark:from-indigo-900/10 dark:to-purple-900/10 shadow-md">
+          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 dark:from-indigo-900/20 dark:to-purple-900/20 shadow-md">
             <CardContent className="p-3 sm:p-4">
               <div className="flex flex-col">
                 <p className="text-xs sm:text-sm text-purple-700 dark:text-purple-300 mb-1">Monthly Income</p>
@@ -94,7 +94,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-purple-900/10 dark:to-pink-900/10 shadow-md">
+          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-purple-900/20 dark:to-pink-900/20 shadow-md">
             <CardContent className="p-3 sm:p-4">
               <div className="flex flex-col">
                 <p className="text-xs sm:text-sm text-pink-700 dark:text-pink-300 mb-1">Monthly Expenses</p>
@@ -114,7 +114,7 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-pink-50/30 to-rose-50/30 dark:from-pink-900/10 dark:to-rose-900/10 shadow-md">
+          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-pink-50/30 to-rose-50/30 dark:from-pink-900/20 dark:to-rose-900/20 shadow-md">
             <CardContent className="p-3 sm:p-4">
               <div className="flex flex-col">
                 <p className="text-xs sm:text-sm text-rose-700 dark:text-rose-300 mb-1">Savings Rate</p>
@@ -137,7 +137,7 @@ export default function DashboardPage() {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           {/* Financial Overview - Large Chart */}
-          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-white to-indigo-50/20 shadow-md md:col-span-2">
+          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-white to-indigo-50/20 dark:from-gray-900/40 dark:to-indigo-950/20 shadow-md md:col-span-2">
             <CardHeader className="pb-2 space-y-1 border-b border-indigo-100/30 dark:border-indigo-900/30">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
@@ -145,10 +145,10 @@ export default function DashboardPage() {
                   <CardTitle className="text-indigo-800 dark:text-indigo-200">Financial Overview</CardTitle>
                 </div>
                 <Tabs defaultValue="month" className="w-[180px]">
-                  <TabsList className="grid w-full grid-cols-3 h-8 bg-white p-1 border border-indigo-100 shadow-sm dark:bg-indigo-900">
-                    <TabsTrigger value="week" className="text-xs data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 dark:data-[state=active]:bg-indigo-900 dark:data-[state=active]:text-indigo-300">Week</TabsTrigger>
-                    <TabsTrigger value="month" className="text-xs data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 dark:data-[state=active]:bg-indigo-900 dark:data-[state=active]:text-indigo-300">Month</TabsTrigger>
-                    <TabsTrigger value="year" className="text-xs data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 dark:data-[state=active]:bg-indigo-900 dark:data-[state=active]:text-indigo-300">Year</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-3 h-8 bg-white dark:bg-gray-800 p-1 border border-indigo-100 dark:border-indigo-800 shadow-sm">
+                    <TabsTrigger value="week" className="text-xs data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 dark:data-[state=active]:bg-indigo-900/60 dark:data-[state=active]:text-indigo-300">Week</TabsTrigger>
+                    <TabsTrigger value="month" className="text-xs data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 dark:data-[state=active]:bg-indigo-900/60 dark:data-[state=active]:text-indigo-300">Month</TabsTrigger>
+                    <TabsTrigger value="year" className="text-xs data-[state=active]:bg-indigo-50 data-[state=active]:text-indigo-700 dark:data-[state=active]:bg-indigo-900/60 dark:data-[state=active]:text-indigo-300">Year</TabsTrigger>
                   </TabsList>
                 </Tabs>
               </div>
@@ -160,14 +160,14 @@ export default function DashboardPage() {
           </Card>
 
           {/* AI Financial Advisor */}
-          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 shadow-md md:row-span-2">
+          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 dark:from-indigo-950/30 dark:to-purple-950/30 shadow-md md:row-span-2">
             <CardHeader className="pb-2 space-y-1 border-b border-indigo-100/30 dark:border-indigo-900/30">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
                   <Sparkles className="h-5 w-5 mr-2 text-purple-600 dark:text-purple-400" />
                   <CardTitle className="text-purple-800 dark:text-purple-200">AI Advisor</CardTitle>
                 </div>
-                <Button variant="outline" size="sm" className="h-8 text-xs border-purple-200 hover:bg-purple-50/50 dark:border-purple-800 dark:hover:bg-purple-900">
+                <Button variant="outline" size="sm" className="h-8 text-xs border-purple-200 hover:bg-purple-50/50 dark:border-purple-800 dark:hover:bg-purple-900/50">
                   Full Consultation
                 </Button>
               </div>
@@ -179,14 +179,14 @@ export default function DashboardPage() {
           </Card>
 
           {/* Income & Expenses */}
-          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-white to-indigo-50/20 shadow-md md:col-span-2">
+          <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-white to-indigo-50/20 dark:from-gray-900/40 dark:to-indigo-950/20 shadow-md md:col-span-2">
             <CardHeader className="pb-2 space-y-1 border-b border-indigo-100/30 dark:border-indigo-900/30">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
                   <BarChart className="h-5 w-5 mr-2 text-indigo-600 dark:text-indigo-400" />
                   <CardTitle className="text-indigo-800 dark:text-indigo-200">Income & Expenses</CardTitle>
                 </div>
-                <Button variant="outline" size="sm" className="h-8 text-xs border-indigo-200 hover:bg-indigo-50/50 dark:border-indigo-800 dark:hover:bg-indigo-900">
+                <Button variant="outline" size="sm" className="h-8 text-xs border-indigo-200 hover:bg-indigo-50/50 dark:border-indigo-800 dark:hover:bg-indigo-900/50">
                   View Details
                 </Button>
               </div>
@@ -201,14 +201,14 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 gap-4 sm:gap-6 md:col-span-3">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               {/* Recent Transactions */}
-              <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-white to-indigo-50/20 shadow-md md:col-span-2">
+              <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-white to-indigo-50/20 dark:from-gray-900/40 dark:to-indigo-950/20 shadow-md md:col-span-2">
                 <CardHeader className="pb-2 space-y-1 border-b border-indigo-100/30 dark:border-indigo-900/30">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
                       <CreditCard className="h-5 w-5 mr-2 text-indigo-600 dark:text-indigo-400" />
                       <CardTitle className="text-indigo-800 dark:text-indigo-200">Recent Transactions</CardTitle>
                     </div>
-                    <Button variant="outline" size="sm" className="h-8 text-xs border-indigo-200 hover:bg-indigo-50/50 dark:border-indigo-800 dark:hover:bg-indigo-900">
+                    <Button variant="outline" size="sm" className="h-8 text-xs border-indigo-200 hover:bg-indigo-50/50 dark:border-indigo-800 dark:hover:bg-indigo-900/50">
                       <Link href="/transactions">All Transactions</Link>
                     </Button>
                   </div>
@@ -220,14 +220,14 @@ export default function DashboardPage() {
               </Card>
 
               {/* Financial Health Score */}
-              <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-purple-50/30 to-pink-50/30 shadow-md">
+              <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-purple-50/30 to-pink-50/30 dark:from-purple-950/30 dark:to-pink-950/30 shadow-md">
                 <CardHeader className="pb-2 space-y-1 border-b border-indigo-100/30 dark:border-indigo-900/30">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
                       <HeartPulse className="h-5 w-5 mr-2 text-pink-600 dark:text-pink-400" />
                       <CardTitle className="text-pink-800 dark:text-pink-200">Financial Health</CardTitle>
                     </div>
-                    <Button variant="outline" size="sm" className="h-8 text-xs border-pink-200 hover:bg-pink-50/50 dark:border-pink-800 dark:hover:bg-pink-900">
+                    <Button variant="outline" size="sm" className="h-8 text-xs border-pink-200 hover:bg-pink-50/50 dark:border-pink-800 dark:hover:bg-pink-900/50">
                       View Details
                     </Button>
                   </div>
@@ -241,7 +241,7 @@ export default function DashboardPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               {/* Investment Portfolio */}
-              <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-white to-indigo-50/20 shadow-md md:col-span-2">
+              <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-white to-indigo-50/20 dark:from-gray-900/40 dark:to-indigo-950/20 shadow-md md:col-span-2">
                 <CardContent className="p-4">
                   <InvestmentPortfolio />
                 </CardContent>
@@ -250,14 +250,14 @@ export default function DashboardPage() {
               {/* Side-by-side boxes */}
               <div className="grid grid-cols-1 gap-4 sm:gap-6">
                 {/* Goals Progress */}
-                <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-white to-indigo-50/20 shadow-md">
+                <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-white to-indigo-50/20 dark:from-gray-900/40 dark:to-indigo-950/20 shadow-md">
                   <CardContent className="p-4">
                     <GoalsProgress />
                   </CardContent>
                 </Card>
 
                 {/* Tax Insights */}
-                <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-white to-indigo-50/20 shadow-md">
+                <Card className="border border-indigo-200/30 dark:border-indigo-800/30 bg-gradient-to-br from-white to-indigo-50/20 dark:from-gray-900/40 dark:to-indigo-950/20 shadow-md">
                   <CardContent className="p-4">
                     <TaxInsights />
                   </CardContent>
@@ -296,7 +296,7 @@ export default function DashboardPage() {
             },
           ].map((action, index) => (
             <Link key={index} href={action.link}>
-              <Card className="border border-primary/10 shadow-sm hover:bg-secondary/20 transition-all duration-300 hover:-translate-y-1 h-full dark:border-primary/20 dark:hover:bg-secondary/30">
+              <Card className="border border-primary/10 shadow-sm hover:bg-secondary/20 transition-all duration-300 hover:-translate-y-1 h-full dark:border-primary/20 dark:hover:bg-primary/10">
                 <CardContent className="p-3 sm:p-4 flex flex-row sm:flex-col sm:items-center sm:text-center gap-3">
                   <div className="p-2 rounded-full bg-primary/10 dark:bg-primary/20">
                     {action.icon}
