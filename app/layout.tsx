@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <MockClerkProvider>
       <html lang="en" suppressHydrationWarning className="h-full">
-        <body className={`${inter.className} h-full`}>
+        <body className={`${inter.className} h-full`} suppressHydrationWarning>
           <AuthProvider>
             {children}
           </AuthProvider>

@@ -1,11 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Globe from 'react-globe.gl';
 import * as THREE from 'three';
 
 const WireframeGlobe = () => {
   const globeRef = useRef<any>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+    
     if (globeRef.current) {
       const controls = globeRef.current.controls();
       controls.autoRotate = true;
@@ -22,6 +25,10 @@ const WireframeGlobe = () => {
       });
     }
   }, []);
+
+  if (!isMounted) {
+    return <div className="w-[1000px] h-[1000px]" />; // Empty placeholder with same dimensions
+  }
 
   return (
     <Globe

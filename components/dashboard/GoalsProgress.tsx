@@ -1,7 +1,7 @@
 "use client";
 
 import { Progress } from "@/components/ui/progress";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Target, Activity } from "lucide-react";
 
 interface Goal {
   id: string;
@@ -64,40 +64,51 @@ export default function GoalsProgress() {
   };
 
   return (
-    <div className="space-y-6">
-      {goals.map((goal) => {
-        const percentage = calculatePercentage(goal.current, goal.target);
-        
-        return (
-          <div key={goal.id} className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-medium">{goal.name}</h4>
-                <p className="text-xs text-muted-foreground">Target: {formatCurrency(goal.target)} by {goal.deadline}</p>
-              </div>
-              <span className="text-sm font-medium">{percentage}%</span>
-            </div>
-            
-            <div className="relative">
-              <Progress 
-                value={percentage} 
-                className={`h-2 ${percentage === 100 ? "bg-opacity-20" : ""}`}
-                indicatorClassName={goal.color}
-              />
-            </div>
-            
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Current: {formatCurrency(goal.current)}</span>
-              <span>Remaining: {formatCurrency(goal.target - goal.current)}</span>
-            </div>
-          </div>
-        );
-      })}
+    <div className="h-full flex flex-col">
+      {/* Header */}
+      <div className="mb-4">
+        <div className="flex items-center gap-1.5 mb-1">
+          <Target className="h-4 w-4" />
+          <h3 className="font-medium">Goals Progress</h3>
+        </div>
+        <p className="text-xs text-muted-foreground">Track your financial targets</p>
+      </div>
       
-      <div className="pt-2">
-        <button className="text-sm text-primary flex items-center hover:underline">
-          Add New Goal <ChevronRight className="h-4 w-4 ml-1" />
-        </button>
+      <div className="space-y-4 flex-1">
+        {goals.map((goal) => {
+          const percentage = calculatePercentage(goal.current, goal.target);
+          
+          return (
+            <div key={goal.id} className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-medium text-sm">{goal.name}</h4>
+                  <p className="text-xs text-muted-foreground">Target: {formatCurrency(goal.target)} by {goal.deadline}</p>
+                </div>
+                <span className="text-sm font-medium">{percentage}%</span>
+              </div>
+              
+              <div className="relative">
+                <Progress 
+                  value={percentage} 
+                  className={`h-1.5 ${percentage === 100 ? "bg-opacity-20" : ""}`}
+                  indicatorClassName={goal.color}
+                />
+              </div>
+              
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>Current: {formatCurrency(goal.current)}</span>
+                <span>Remaining: {formatCurrency(goal.target - goal.current)}</span>
+              </div>
+            </div>
+          );
+        })}
+        
+        <div className="pt-1">
+          <button className="text-sm text-primary flex items-center hover:underline">
+            Add New Goal <ChevronRight className="h-4 w-4 ml-1" />
+          </button>
+        </div>
       </div>
     </div>
   );

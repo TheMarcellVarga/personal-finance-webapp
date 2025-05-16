@@ -248,19 +248,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               {/* Investment Portfolio */}
               <Card className="border border-primary/10 shadow-sm md:col-span-2">
-                <CardHeader className="pb-2 space-y-1">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                      <TrendingUp className="h-5 w-5 mr-2 text-primary" />
-                      <CardTitle>Investment Portfolio</CardTitle>
-                    </div>
-                    <Button variant="outline" size="sm" className="h-8 text-xs">
-                      Portfolio Settings
-                    </Button>
-                  </div>
-                  <CardDescription>Track your investment performance</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-2">
+                <CardContent className="p-4">
                   <InvestmentPortfolio />
                 </CardContent>
               </Card>
@@ -269,32 +257,14 @@ export default function DashboardPage() {
               <div className="grid grid-cols-1 gap-4 sm:gap-6">
                 {/* Goals Progress */}
                 <Card className="border border-primary/10 shadow-sm">
-                  <CardHeader className="pb-2 space-y-1">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center">
-                        <Activity className="h-5 w-5 mr-2 text-primary" />
-                        <CardTitle>Goals Progress</CardTitle>
-                      </div>
-                    </div>
-                    <CardDescription>Track your financial targets</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-2">
+                  <CardContent className="p-4">
                     <GoalsProgress />
                   </CardContent>
                 </Card>
 
                 {/* Tax Insights */}
                 <Card className="border border-primary/10 shadow-sm">
-                  <CardHeader className="pb-2 space-y-1">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center">
-                        <Receipt className="h-5 w-5 mr-2 text-primary" />
-                        <CardTitle>Tax Insights</CardTitle>
-                      </div>
-                    </div>
-                    <CardDescription>Tax situation and savings</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-2">
+                  <CardContent className="p-4">
                     <TaxInsights />
                   </CardContent>
                 </Card>

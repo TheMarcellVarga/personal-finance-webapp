@@ -27,10 +27,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check if user is logged in (e.g., check localStorage or session)
     const checkAuth = async () => {
       try {
-        // Replace with your actual auth check logic
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
+        // Only run on client side
+        if (typeof window !== 'undefined') {
+          // Replace with your actual auth check logic
+          const storedUser = localStorage.getItem("user");
+          if (storedUser) {
+            setUser(JSON.parse(storedUser));
+          }
         }
       } catch (error) {
         console.error("Auth check failed:", error);
@@ -53,7 +56,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email: email,
       };
       setUser(mockUser);
-      localStorage.setItem("user", JSON.stringify(mockUser));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("user", JSON.stringify(mockUser));
+      }
     } catch (error) {
       console.error("Login failed:", error);
       throw error;
@@ -72,7 +77,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email: email,
       };
       setUser(mockUser);
-      localStorage.setItem("user", JSON.stringify(mockUser));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("user", JSON.stringify(mockUser));
+      }
     } catch (error) {
       console.error("Registration failed:", error);
       throw error;
@@ -86,7 +93,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       // Replace with your actual logout logic
       setUser(null);
-      localStorage.removeItem("user");
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem("user");
+      }
     } catch (error) {
       console.error("Logout failed:", error);
       throw error;
