@@ -35,6 +35,7 @@ export default function WorldMap({
   const countries = useCountries();
   const [globeReady, setGlobeReady] = useState(false);
   const [isGlobeInitialized, setIsGlobeInitialized] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   
   // Prepare microstate marker data
   const [microstateMarkers, setMicrostateMarkers] = useState<MicrostateData[]>([]);
@@ -45,6 +46,12 @@ export default function WorldMap({
   const lightGlobeUrl = "//unpkg.com/three-globe/example/img/earth-day.jpg";
 
   const defaultColor = isDarkMode ? "#384152" : "#e5e7eb";
+
+  // Set mounted state
+  useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
 
   // Prepare microstate data from tax data
   useEffect(() => {
@@ -239,6 +246,13 @@ export default function WorldMap({
     }
   };
 
+  // Handle globe ready event safely
+  const handleGlobeReady = () => {
+    if (isMounted) {
+      setGlobeReady(true);
+    }
+  };
+
   return (
     <div ref={containerRef} className="h-full w-full relative">
       <Globe
@@ -251,7 +265,7 @@ export default function WorldMap({
         atmosphereColor={isDarkMode ? "rgba(100,120,220,0.8)" : "rgba(180,180,255,0.2)"}
         atmosphereAltitude={0.15}
         polygonsData={countries}
-        onGlobeReady={() => setGlobeReady(true)}
+        onGlobeReady={handleGlobeReady}
         polygonCapColor={(d) => {
           const country = d as CountryFeature;
           const countryCode = country.properties.ISO_A2;
