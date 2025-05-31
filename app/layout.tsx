@@ -5,6 +5,7 @@ import { AuthProvider } from "@/lib/auth-context";
 // import { ClerkProvider } from "@clerk/nextjs";
 import { MockClerkProvider } from "@/lib/mock-clerk";
 import { ThemeProvider } from "@/lib/theme-context";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
           <AuthProvider>
             <ThemeProvider>
               {children}
+              <Toaster />
             </ThemeProvider>
           </AuthProvider>
         </body>
