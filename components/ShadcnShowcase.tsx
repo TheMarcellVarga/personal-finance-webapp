@@ -58,6 +58,7 @@ import {
   Download,
   Heart
 } from "lucide-react";
+import Link from "next/link";
 
 export function ShadcnShowcase() {
   const [isLoading, setIsLoading] = useState(false);
@@ -380,7 +381,7 @@ export function ShadcnShowcase() {
                     <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                       <li className="row-span-3">
                         <NavigationMenuLink asChild>
-                          <a
+                          <Link
                             className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
                             href="/"
                           >
@@ -391,37 +392,37 @@ export function ShadcnShowcase() {
                             <p className="text-sm leading-tight text-muted-foreground">
                               Comprehensive financial management platform with advanced analytics.
                             </p>
-                          </a>
+                          </Link>
                         </NavigationMenuLink>
                       </li>
                       <li>
                         <NavigationMenuLink asChild>
-                          <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground" href="/calculator">
+                          <Link className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground" href="/calculator">
                             <div className="text-sm font-medium leading-none">Tax Calculator</div>
                             <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                               Calculate taxes across different countries and jurisdictions.
                             </p>
-                          </a>
+                          </Link>
                         </NavigationMenuLink>
                       </li>
                       <li>
                         <NavigationMenuLink asChild>
-                          <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground" href="/dashboard">
+                          <Link className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground" href="/dashboard">
                             <div className="text-sm font-medium leading-none">Investment Tracker</div>
                             <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                               Monitor your investment portfolio and market performance.
                             </p>
-                          </a>
+                          </Link>
                         </NavigationMenuLink>
                       </li>
                       <li>
                         <NavigationMenuLink asChild>
-                          <a className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground" href="/financial-planning">
+                          <Link className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground" href="/financial-planning">
                             <div className="text-sm font-medium leading-none">Budget Planner</div>
                             <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                               Create and manage comprehensive financial budgets.
                             </p>
-                          </a>
+                          </Link>
                         </NavigationMenuLink>
                       </li>
                     </ul>

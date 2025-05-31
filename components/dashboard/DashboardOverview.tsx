@@ -105,9 +105,9 @@ export default function DashboardOverview() {
 
   const generateChartData = (period: string) => {
     let labels: string[] = [];
-    let incomeData: number[] = [];
-    let expensesData: number[] = [];
-    let savingsData: number[] = [];
+    const incomeData: number[] = [];
+    const expensesData: number[] = [];
+    const savingsData: number[] = [];
     
     // Generate more realistic data with some variability
     const baseIncome = 6000;
